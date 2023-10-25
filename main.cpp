@@ -1,73 +1,11 @@
 #include <bits/stdc++.h>
 #include <string>
-// #include "utils/account.hpp"
+#include <conio.h>
+#include "utils/account.hpp"
 #include "utils/additional.hpp"
 using namespace std;
 
-class Account
-{
-private:
-    string username;
-    string password;
-
-public:
-    Account(string username, string password)
-    {
-        this->username = username;
-        this->password = password;
-    }
-
-    string getUsername()
-    {
-        return this->username;
-    }
-
-    string getPassword()
-    {
-        return this->password;
-    }
-};
-
-void menuLogin(int *pilih)
-{
-    string pilihanTemp;
-
-    system("cls");
-    cout << "1. Login" << endl;
-    cout << "2. Register" << endl;
-    cout << "Masukkan pilihan anda: ";
-    cin >> pilihanTemp;
-
-    try
-    {
-        *pilih = stoi(pilihanTemp);
-        switch (*pilih)
-        {
-        case 1:
-            system("cls");
-            cout << "Login" << endl;
-            break;
-
-        case 2:
-            system("cls");
-            cout << "Register" << endl;
-            break;
-
-        default:
-            cout << "Pilihan tidak tersedia" << endl;
-            endOfFunction(1);
-            menuLogin(pilih);
-            break;
-        }
-    }
-    catch (invalid_argument &e)
-    {
-        cout << "Pilihan tidak tersedia" << endl;
-        endOfFunction(1);
-    }
-}
-
-void menu(int *pilih)
+void menu(int *pilih, vector<Account> *accountParam, bool *loginStatus)
 {
     string pilihanTemp;
 
@@ -84,7 +22,7 @@ void menu(int *pilih)
         switch (*pilih)
         {
         case 1:
-            menuLogin(pilih);
+            menuLogin(pilih, accountParam, loginStatus);
             break;
 
         case 2:
@@ -107,10 +45,12 @@ void menu(int *pilih)
 int main()
 {
     int pilihan = 0;
+    bool loginStatus = false;
+    vector<Account> accounts;
 
     while (true)
     {
-        menu(&pilihan);
+        menu(&pilihan, &accounts, &loginStatus);
     }
 
     return 0;
