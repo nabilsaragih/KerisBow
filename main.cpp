@@ -2,6 +2,9 @@
 #include <conio.h>
 #include "utils/account.hpp"
 #include "utils/additional.hpp"
+#include "utils/admin.hpp"
+#include "utils/customer.hpp"
+#include "utils/items.hpp"
 using namespace std;
 
 void menu(int *pilih, unordered_map<string, string> *accountParam, bool *loginStatus, unordered_map<string, string> *accountRoles)
@@ -58,6 +61,7 @@ int main()
     directoryChecker("db");
     fileChecker("accounts.tsv", "db");
     fileChecker("accounts_role.tsv", "db");
+    fileChecker("items.tsv", "db");
 
     while (true)
     {

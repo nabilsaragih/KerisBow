@@ -30,7 +30,7 @@ void fileChecker(string file, string directory)
         else if (file == "items.tsv")
         {
             ofstream fileStream(directory + "/" + file);
-            fileStream << "id\tname\tprice\tamount" << endl;
+            fileStream << "nama\tharga\tfitur\tdeskripsi" << endl;
             fileStream.close();
         }
         else if (file == "transactions.tsv")

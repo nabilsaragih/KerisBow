@@ -4,6 +4,8 @@
 #include <bits/stdc++.h>
 #include <string>
 #include "additional.hpp"
+#include "admin.hpp"
+#include "customer.hpp"
 using namespace std;
 
 void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, bool *loginStatus);
@@ -105,7 +107,7 @@ void registerAdmin(unordered_map<string, string> *accountsParam)
 
     accountsParam->insert({username, password});
     addToFile(accountsParam);
-    addRoles(accountsParam, "Admin");
+    addRoles(accountsParam, "admin");
     std::cout << "Register berhasil" << endl;
     endOfFunction(1);
 }
@@ -146,27 +148,6 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, b
         cout << "Pilihan tidak tersedia" << endl;
         endOfFunction(1);
     }
-
-    system("cls");
-    cout << "Register Customer" << endl;
-    cout << "Username: ";
-    cin >> username;
-    fflush(stdin);
-    cout << "Password: ";
-    cin >> password;
-    fflush(stdin);
-
-    if (accountsParam->find(username) != accountsParam->end())
-    {
-        cout << "Username sudah terdaftar" << endl;
-        endOfFunction(1);
-        return;
-    }
-
-    accountsParam->insert({username, password});
-    addToFile(accountsParam);
-    std::cout << "Register berhasil" << endl;
-    endOfFunction(1);
 }
 
 void login(unordered_map<string, string> *accountsParam, bool *loginStatus, unordered_map<string, string> *accountRoles)
@@ -190,7 +171,7 @@ void login(unordered_map<string, string> *accountsParam, bool *loginStatus, unor
                 *loginStatus = true;
                 return;
             }
-            else if (accountRoles->at(username) == "Admin")
+            else if (accountRoles->at(username) == "admin")
             {
                 *loginStatus = true;
                 return;
