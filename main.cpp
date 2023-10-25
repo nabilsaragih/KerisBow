@@ -4,7 +4,7 @@
 #include "utils/additional.hpp"
 using namespace std;
 
-void menu(int *pilih, unordered_map<string, string> *accountParam, bool *loginStatus)
+void menu(int *pilih, unordered_map<string, string> *accountParam, bool *loginStatus, unordered_map<string, string> *accountRoles)
 {
     string pilihanTemp;
 
@@ -22,7 +22,7 @@ void menu(int *pilih, unordered_map<string, string> *accountParam, bool *loginSt
         switch (*pilih)
         {
         case 1:
-            menuLogin(pilih, accountParam, loginStatus);
+            menuLogin(pilih, accountParam, loginStatus, accountRoles);
             break;
 
         case 2:
@@ -53,6 +53,7 @@ int main()
     int pilihan = 0;
     bool loginStatus = false;
     unordered_map<string, string> accounts;
+    unordered_map<string, string> accountRoles;
 
     directoryChecker("db");
     fileChecker("accounts.tsv", "db");
@@ -60,7 +61,7 @@ int main()
 
     while (true)
     {
-        menu(&pilihan, &accounts, &loginStatus);
+        menu(&pilihan, &accounts, &loginStatus, &accountRoles);
     }
 
     return 0;

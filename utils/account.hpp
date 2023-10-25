@@ -19,17 +19,6 @@ void addToFile(unordered_map<string, string> *accountsParam)
     fileStream.close();
 }
 
-void addRoles(unordered_map<string, string> *accountsParam, string role)
-{
-    ofstream fileStream("db/accounts_role.tsv", ios::trunc);
-    fileStream << "username\trole" << endl;
-    for (auto it = accountsParam->begin(); it != accountsParam->end(); it++)
-    {
-        fileStream << it->first << "\t" << role << endl;
-    }
-    fileStream.close();
-}
-
 void readFromFile(unordered_map<string, string> *accountsParam)
 {
     ifstream fileStream("db/accounts.tsv");
@@ -41,6 +30,32 @@ void readFromFile(unordered_map<string, string> *accountsParam)
         getline(lineStream, username, '\t');
         getline(lineStream, password, '\t');
         accountsParam->insert({username, password});
+    }
+    fileStream.close();
+}
+
+void addRoles(unordered_map<string, string> *accountsParam, string role)
+{
+    ofstream fileStream("db/accounts_role.tsv", ios::trunc);
+    fileStream << "username\trole" << endl;
+    for (auto it = accountsParam->begin(); it != accountsParam->end(); it++)
+    {
+        fileStream << it->first << "\t" << role << endl;
+    }
+    fileStream.close();
+}
+
+void readRoles(unordered_map<string, string> *accountsParam)
+{
+    ifstream fileStream("db/accounts_role.tsv");
+    string line, username, role;
+    getline(fileStream, line);
+    while (getline(fileStream, line))
+    {
+        stringstream lineStream(line);
+        getline(lineStream, username, '\t');
+        getline(lineStream, role, '\t');
+        accountsParam->insert({username, role});
     }
     fileStream.close();
 }
@@ -70,10 +85,10 @@ void registerCustomer(unordered_map<string, string> *accountsParam)
     endOfFunction(1);
 }
 
-void registerSeller(unordered_map<string, string> *accountsParam)
+void registerAdmin(unordered_map<string, string> *accountsParam)
 {
     string username, password;
-    cout << "Register Seller" << endl;
+    cout << "Register Admin" << endl;
     cout << "Username: ";
     cin >> username;
     fflush(stdin);
@@ -90,7 +105,7 @@ void registerSeller(unordered_map<string, string> *accountsParam)
 
     accountsParam->insert({username, password});
     addToFile(accountsParam);
-    addRoles(accountsParam, "seller");
+    addRoles(accountsParam, "Admin");
     std::cout << "Register berhasil" << endl;
     endOfFunction(1);
 }
@@ -101,7 +116,7 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, b
 
     cout << "Register sebagai: " << endl;
     cout << "1. Customer" << endl;
-    cout << "2. Seller" << endl;
+    cout << "2. Admin" << endl;
     cout << "Masukkan pilihan anda: "; cin >> pilihanTemp; fflush(stdin);
 
     try
@@ -116,7 +131,7 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, b
 
         case 2:
             system("cls");
-            registerSeller(accountsParam);
+            registerAdmin(accountsParam);
             break;
 
         default:
@@ -154,7 +169,7 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, b
     endOfFunction(1);
 }
 
-void login(unordered_map<string, string> *accountsParam, bool *loginStatus)
+void login(unordered_map<string, string> *accountsParam, bool *loginStatus, unordered_map<string, string> *accountRoles)
 {
     string username, password;
     cout << "Username: ";
@@ -168,10 +183,18 @@ void login(unordered_map<string, string> *accountsParam, bool *loginStatus)
     {
         if (accountsParam->at(username) == password)
         {
-            *loginStatus = true;
             cout << "Login berhasil" << endl;
             endOfFunction(1);
-            return;
+            if (accountRoles->at(username) == "customer")
+            {
+                *loginStatus = true;
+                return;
+            }
+            else if (accountRoles->at(username) == "Admin")
+            {
+                *loginStatus = true;
+                return;
+            }
         }
     }
 
@@ -179,11 +202,12 @@ void login(unordered_map<string, string> *accountsParam, bool *loginStatus)
     endOfFunction(1);
 }
 
-void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, bool *loginStatus)
+void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, bool *loginStatus, unordered_map<string, string> *accountRoles)
 {
     string pilihanTemp;
 
     readFromFile(accountsParam);
+    readRoles(accountRoles);
 
     system("cls");
     cout << "1. Login" << endl;
@@ -199,7 +223,7 @@ void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, bool *l
         {
         case 1:
             system("cls");
-            login(accountsParam, loginStatus);
+            login(accountsParam, loginStatus, accountRoles);
             break;
 
         case 2:
