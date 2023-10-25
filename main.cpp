@@ -56,6 +56,7 @@ int main()
 
     directoryChecker("db");
     fileChecker("accounts.tsv", "db");
+    fileChecker("accounts_role.tsv", "db");
 
     while (true)
     {

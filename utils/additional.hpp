@@ -39,6 +39,12 @@ void fileChecker(string file, string directory)
             fileStream << "username\titem_id\tamount" << endl;
             fileStream.close();
         }
+        else if (file == "accounts_role.tsv")
+        {
+            ofstream fileStream(directory + "/" + file);
+            fileStream << "username\trole" << endl;
+            fileStream.close();
+        }
     }
 }
 
