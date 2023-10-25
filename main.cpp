@@ -55,6 +55,8 @@ int main()
     bool loginStatus = false;
     vector<Account> accounts;
 
+    directoryChecker("db");
+
     while (true)
     {
         menu(&pilihan, &accounts, &loginStatus);
