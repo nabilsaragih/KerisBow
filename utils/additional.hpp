@@ -2,40 +2,41 @@
 #define UTILS_ADDITIONAL_HPP
 
 #include <bits/stdc++.h>
+using namespace std;
 void endOfFunction(int delayInSeconds)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(delayInSeconds * 1000));
+    this_thread::sleep_for(chrono::milliseconds(delayInSeconds * 1000));
     system("cls");
 }
 
-void directoryChecker(std::string directory)
+void directoryChecker(string directory)
 {
-    if (!std::filesystem::exists(directory))
+    if (!filesystem::exists(directory))
     {
-        std::filesystem::create_directory(directory);
+        filesystem::create_directory(directory);
     }
 }
 
-void fileChecker(std::string file, std::string directory)
+void fileChecker(string file, string directory)
 {
-    if (!std::filesystem::exists(directory + "/" + file))
+    if (!filesystem::exists(directory + "/" + file))
     {
         if (file == "accounts.tsv")
         {
-            std::ofstream fileStream(directory + "/" + file);
-            fileStream << "username\tpassword" << std::endl;
+            ofstream fileStream(directory + "/" + file);
+            fileStream << "username\tpassword" << endl;
             fileStream.close();
         }
         else if (file == "items.tsv")
         {
-            std::ofstream fileStream(directory + "/" + file);
-            fileStream << "id\tname\tprice\tamount" << std::endl;
+            ofstream fileStream(directory + "/" + file);
+            fileStream << "id\tname\tprice\tamount" << endl;
             fileStream.close();
         }
         else if (file == "transactions.tsv")
         {
-            std::ofstream fileStream(directory + "/" + file);
-            fileStream << "username\titem_id\tamount" << std::endl;
+            ofstream fileStream(directory + "/" + file);
+            fileStream << "username\titem_id\tamount" << endl;
             fileStream.close();
         }
     }
