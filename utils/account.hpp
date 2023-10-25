@@ -26,6 +26,9 @@ void registerAccount(unordered_map<string, string> *accountsParam)
     cin >> password; fflush(stdin);
 
     accountsParam->insert({username, password});
+    addToFile(accountsParam);
+    cout << "Register berhasil" << endl;
+    endOfFunction(1);
 }
 
 void login(unordered_map<string, string> *accountsParam, bool *loginStatus)
@@ -48,6 +51,7 @@ void login(unordered_map<string, string> *accountsParam, bool *loginStatus)
     }
 
     cout << "Login gagal" << endl;
+    endOfFunction(1);
 }
 
 void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, bool *loginStatus)
