@@ -8,9 +8,8 @@ void endOfFunction(int delayInSeconds)
     system("cls");
 }
 
-void directoryChecker()
+void directoryChecker(string directory)
 {
-    std::string directory = "db";
     if (!std::filesystem::exists(directory))
     {
         std::filesystem::create_directory(directory);
