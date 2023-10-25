@@ -1,11 +1,10 @@
 #include <bits/stdc++.h>
-#include <string>
 #include <conio.h>
 #include "utils/account.hpp"
 #include "utils/additional.hpp"
 using namespace std;
 
-void menu(int *pilih, vector<Account> *accountParam, bool *loginStatus)
+void menu(int *pilih, unordered_map<string, string> *accountParam, bool *loginStatus)
 {
     string pilihanTemp;
 
@@ -53,9 +52,10 @@ int main()
 {
     int pilihan = 0;
     bool loginStatus = false;
-    vector<Account> accounts;
+    unordered_map<string, string> accounts;
 
     directoryChecker("db");
+    fileChecker("accounts.tsv", "db");
 
     while (true)
     {
