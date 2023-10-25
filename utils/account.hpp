@@ -6,49 +6,40 @@
 #include "additional.hpp"
 using namespace std;
 
-class Account
+void addToFile(unordered_map<string, string> *accountsParam)
 {
-private:
-    string username;
-    string password;
-
-public:
-    Account(string username, string password)
+    ofstream fileStream("db/accounts.tsv", ios::trunc);
+    fileStream << "username\tpassword" << endl;
+    for (auto it = accountsParam->begin(); it != accountsParam->end(); it++)
     {
-        this->username = username;
-        this->password = password;
+        fileStream << it->first << "\t" << it->second << endl;
     }
-
-    string getUsername()
-    {
-        return this->username;
-    }
-
-    string getPassword()
-    {
-        return this->password;
-    }
-};
-
-void Register(vector<Account> *accountsParam) {
-    string username, password;
-    cout << "Username: ";
-    cin >> username; fflush(stdin);
-    cout << "Password: ";
-    cin >> password; fflush(stdin);
-
-    accountsParam->push_back(Account(username, password));
+    fileStream.close();
 }
 
-void Login(vector<Account> *accountsParam, bool *loginStatus) {
+void registerAccount(unordered_map<string, string> *accountsParam)
+{
     string username, password;
     cout << "Username: ";
     cin >> username; fflush(stdin);
     cout << "Password: ";
     cin >> password; fflush(stdin);
 
-    for (int i = 0; i < accountsParam->size(); i++) {
-        if (accountsParam->at(i).getUsername() == username && accountsParam->at(i).getPassword() == password) {
+    accountsParam->insert({username, password});
+}
+
+void login(unordered_map<string, string> *accountsParam, bool *loginStatus)
+{
+    string username, password;
+    cout << "Username: ";
+    cin >> username; fflush(stdin);
+    cout << "Password: ";
+    cin >> password; fflush(stdin);
+
+    if (accountsParam->find(username) != accountsParam->end())
+    {
+        if (accountsParam->at(username) == password)
+        {
             *loginStatus = true;
             cout << "Login berhasil" << endl;
             endOfFunction(1);
@@ -59,7 +50,7 @@ void Login(vector<Account> *accountsParam, bool *loginStatus) {
     cout << "Login gagal" << endl;
 }
 
-void menuLogin(int *pilih, vector<Account> *accountsParam, bool *loginStatus)
+void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, bool *loginStatus)
 {
     string pilihanTemp;
 
@@ -76,12 +67,12 @@ void menuLogin(int *pilih, vector<Account> *accountsParam, bool *loginStatus)
         {
         case 1:
             system("cls");
-            Login(accountsParam, loginStatus);
+            login(accountsParam, loginStatus);
             break;
 
         case 2:
             system("cls");
-            Register(accountsParam);
+            registerAccount(accountsParam);
             break;
 
         default:
