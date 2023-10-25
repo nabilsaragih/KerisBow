@@ -3,3 +3,6 @@ Sebuah program CRUD sebagai Proyek Akhir Praktikum Struktur Data. Program ini di
 - [Muhammad Nabil Saragih](https://github.com/nabilsaragih)
 - [Maulana Agus Setiawan](https://github.com/MaulanaASetiawan)
 - [Natanael Primus L. H. N.](https://github.com/NatanaelPLHN)
+
+### Program Plan
+![Plan](/img/plan.jpg)
