@@ -17,6 +17,21 @@ void addToFile(unordered_map<string, string> *accountsParam)
     fileStream.close();
 }
 
+void readFromFile(unordered_map<string, string> *accountsParam)
+{
+    ifstream fileStream("db/accounts.tsv");
+    string line, username, password;
+    getline(fileStream, line);
+    while (getline(fileStream, line))
+    {
+        stringstream lineStream(line);
+        getline(lineStream, username, '\t');
+        getline(lineStream, password, '\t');
+        accountsParam->insert({username, password});
+    }
+    fileStream.close();
+}
+
 void registerAccount(unordered_map<string, string> *accountsParam)
 {
     string username, password;
@@ -57,6 +72,8 @@ void login(unordered_map<string, string> *accountsParam, bool *loginStatus)
 void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, bool *loginStatus)
 {
     string pilihanTemp;
+
+    readFromFile(accountsParam);
 
     system("cls");
     cout << "1. Login" << endl;
