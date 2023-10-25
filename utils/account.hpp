@@ -3,6 +3,7 @@
 
 #include <bits/stdc++.h>
 #include <string>
+#include "additional.hpp"
 using namespace std;
 
 class Account
@@ -39,7 +40,26 @@ void Register(vector<Account> *accountsParam) {
     accountsParam->push_back(Account(username, password));
 }
 
-void menuLogin(int *pilih, vector<Account> *accountsParam)
+void Login(vector<Account> *accountsParam, bool *loginStatus) {
+    string username, password;
+    cout << "Username: ";
+    cin >> username; fflush(stdin);
+    cout << "Password: ";
+    cin >> password; fflush(stdin);
+
+    for (int i = 0; i < accountsParam->size(); i++) {
+        if (accountsParam->at(i).getUsername() == username && accountsParam->at(i).getPassword() == password) {
+            *loginStatus = true;
+            cout << "Login berhasil" << endl;
+            endOfFunction(1);
+            return;
+        }
+    }
+
+    cout << "Login gagal" << endl;
+}
+
+void menuLogin(int *pilih, vector<Account> *accountsParam, bool *loginStatus)
 {
     string pilihanTemp;
 
@@ -56,7 +76,7 @@ void menuLogin(int *pilih, vector<Account> *accountsParam)
         {
         case 1:
             system("cls");
-            cout << "Login" << endl;
+            Login(accountsParam, loginStatus);
             break;
 
         case 2:
@@ -67,7 +87,7 @@ void menuLogin(int *pilih, vector<Account> *accountsParam)
         default:
             cout << "Pilihan tidak tersedia" << endl;
             endOfFunction(1);
-            menuLogin(pilih, accountsParam);
+            menuLogin(pilih, accountsParam, loginStatus);
             break;
         }
     }
