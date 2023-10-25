@@ -8,7 +8,7 @@
 #include "customer.hpp"
 using namespace std;
 
-void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, bool *loginStatus);
+void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam);
 
 void addToFile(unordered_map<string, string> *accountsParam)
 {
@@ -112,7 +112,7 @@ void registerAdmin(unordered_map<string, string> *accountsParam)
     endOfFunction(1);
 }
 
-void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, bool *loginStatus)
+void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, unordered_map<string, string> *accountsRolesParam)
 {
     string username, password, pilihanTemp;
 
@@ -139,7 +139,7 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, b
         default:
             cout << "Pilihan tidak tersedia" << endl;
             endOfFunction(1);
-            menuLogin(pilih, accountsParam, loginStatus);
+            menuLogin(pilih, accountsParam, accountsRolesParam);
             break;
         }
     }
@@ -150,7 +150,7 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, b
     }
 }
 
-void login(unordered_map<string, string> *accountsParam, bool *loginStatus, unordered_map<string, string> *accountRoles)
+void login(unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam)
 {
     string username, password;
     cout << "Username: ";
@@ -166,14 +166,14 @@ void login(unordered_map<string, string> *accountsParam, bool *loginStatus, unor
         {
             cout << "Login berhasil" << endl;
             endOfFunction(1);
-            if (accountRoles->at(username) == "customer")
+            if (accountRolesParam->at(username) == "customer")
             {
-                *loginStatus = true;
+                cout << "Customer" << endl;
                 return;
             }
-            else if (accountRoles->at(username) == "admin")
+            else if (accountRolesParam->at(username) == "admin")
             {
-                *loginStatus = true;
+                cout << "Admin" << endl;
                 return;
             }
         }
@@ -183,19 +183,15 @@ void login(unordered_map<string, string> *accountsParam, bool *loginStatus, unor
     endOfFunction(1);
 }
 
-void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, bool *loginStatus, unordered_map<string, string> *accountRoles)
+void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam)
 {
     string pilihanTemp;
-
-    readFromFile(accountsParam);
-    readRoles(accountRoles);
 
     system("cls");
     cout << "1. Login" << endl;
     cout << "2. Register" << endl;
     cout << "Masukkan pilihan anda: ";
     cin >> pilihanTemp;
-    fflush(stdin);
 
     try
     {
@@ -204,18 +200,17 @@ void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, bool *l
         {
         case 1:
             system("cls");
-            login(accountsParam, loginStatus, accountRoles);
+            login(accountsParam, accountRolesParam);
             break;
 
         case 2:
             system("cls");
-            registerAccount(accountsParam, pilih, loginStatus);
+            registerAccount(accountsParam, pilih, accountRolesParam);
             break;
 
         default:
             cout << "Pilihan tidak tersedia" << endl;
             endOfFunction(1);
-            menuLogin(pilih, accountsParam, loginStatus);
             break;
         }
     }

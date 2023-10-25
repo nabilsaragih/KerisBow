@@ -7,7 +7,7 @@
 #include "utils/items.hpp"
 using namespace std;
 
-void menu(int *pilih, unordered_map<string, string> *accountParam, bool *loginStatus, unordered_map<string, string> *accountRoles)
+void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map<string, string> *accountRolesParam)
 {
     string pilihanTemp;
 
@@ -25,7 +25,7 @@ void menu(int *pilih, unordered_map<string, string> *accountParam, bool *loginSt
         switch (*pilih)
         {
         case 1:
-            menuLogin(pilih, accountParam, loginStatus, accountRoles);
+            menuLogin(pilih, accountParam, accountRolesParam);
             break;
 
         case 2:
@@ -54,7 +54,6 @@ void menu(int *pilih, unordered_map<string, string> *accountParam, bool *loginSt
 int main()
 {
     int pilihan = 0;
-    bool loginStatus = false;
     unordered_map<string, string> accounts;
     unordered_map<string, string> accountRoles;
 
@@ -65,7 +64,7 @@ int main()
 
     while (true)
     {
-        menu(&pilihan, &accounts, &loginStatus, &accountRoles);
+        menu(&pilihan, &accounts, &accountRoles);
     }
 
     return 0;
