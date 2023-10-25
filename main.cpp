@@ -13,6 +13,7 @@ void menu(int *pilih, vector<Account> *accountParam, bool *loginStatus)
     cout << "Selamat datang di KerisBow" << endl;
     cout << "1. Login" << endl;
     cout << "2. Lihat Barang" << endl;
+    cout << "3. Keluar" << endl;
     cout << "Masukkan pilihan anda: ";
     cin >> pilihanTemp;
 
@@ -27,6 +28,12 @@ void menu(int *pilih, vector<Account> *accountParam, bool *loginStatus)
 
         case 2:
             cout << "Lihat Barang" << endl;
+            break;
+
+        case 3:
+            cout << "Terima kasih telah menggunakan KerisBow" << endl;
+            endOfFunction(1);
+            exit(0);
             break;
 
         default:
