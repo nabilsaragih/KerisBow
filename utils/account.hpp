@@ -8,7 +8,7 @@
 #include "customer.hpp"
 using namespace std;
 
-void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam);
+void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam);
 
 void addToFile(unordered_map<string, string> *accountsParam)
 {
@@ -139,7 +139,7 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, u
         default:
             cout << "Pilihan tidak tersedia" << endl;
             endOfFunction(1);
-            menuLogin(pilih, accountsParam, accountsRolesParam);
+            menuLogin(pilih, accountsParam, accountsRolesParam, headParam);
             break;
         }
     }
