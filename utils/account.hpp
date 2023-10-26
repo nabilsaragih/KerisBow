@@ -36,14 +36,15 @@ void readFromFile(unordered_map<string, string> *accountsParam)
     fileStream.close();
 }
 
-void addRoles(unordered_map<string, string> *accountsParam, string role)
+void addRoles(string username, string role)
 {
-    ofstream fileStream("db/accounts_role.tsv", ios::trunc);
-    fileStream << "username\trole" << endl;
-    for (auto it = accountsParam->begin(); it != accountsParam->end(); it++)
-    {
-        fileStream << it->first << "\t" << role << endl;
-    }
+    ofstream fileStream("db/accounts_role.tsv", ios::app);
+    // fileStream << "username\trole" << endl;
+    // for (auto it = accountsParam->begin(); it != accountsParam->end(); it++)
+    // {
+    //     fileStream << it->first << "\t" << role << endl;
+    // }
+    fileStream << username << "\t" << role << endl;
     fileStream.close();
 }
 
@@ -82,7 +83,7 @@ void registerCustomer(unordered_map<string, string> *accountsParam)
 
     accountsParam->insert({username, password});
     addToFile(accountsParam);
-    addRoles(accountsParam, "customer");
+    addRoles(username, "customer");
     std::cout << "Register berhasil" << endl;
     endOfFunction(1);
 }
@@ -107,7 +108,7 @@ void registerAdmin(unordered_map<string, string> *accountsParam)
 
     accountsParam->insert({username, password});
     addToFile(accountsParam);
-    addRoles(accountsParam, "admin");
+    addRoles(username, "admin");
     std::cout << "Register berhasil" << endl;
     endOfFunction(1);
 }
