@@ -112,7 +112,7 @@ void registerAdmin(unordered_map<string, string> *accountsParam)
     endOfFunction(1);
 }
 
-void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, unordered_map<string, string> *accountsRolesParam)
+void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, unordered_map<string, string> *accountsRolesParam, Node *headParam)
 {
     string username, password, pilihanTemp;
 
@@ -150,7 +150,7 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, u
     }
 }
 
-void login(unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam)
+void login(unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, int *pilih, Node *headParam)
 {
     string username, password;
     cout << "Username: ";
@@ -173,7 +173,7 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
             }
             else if (accountRolesParam->at(username) == "admin")
             {
-                cout << "Admin" << endl;
+                menuAdmin(pilih, headParam);
                 return;
             }
         }
@@ -183,7 +183,7 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
     endOfFunction(1);
 }
 
-void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam)
+void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam)
 {
     string pilihanTemp;
 
@@ -200,12 +200,12 @@ void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unorder
         {
         case 1:
             system("cls");
-            login(accountsParam, accountRolesParam);
+            login(accountsParam, accountRolesParam, pilih, headParam);
             break;
 
         case 2:
             system("cls");
-            registerAccount(accountsParam, pilih, accountRolesParam);
+            registerAccount(accountsParam, pilih, accountRolesParam, headParam);
             break;
 
         default:
