@@ -39,11 +39,6 @@ void readFromFile(unordered_map<string, string> *accountsParam)
 void addRoles(string username, string role)
 {
     ofstream fileStream("db/accounts_role.tsv", ios::app);
-    // fileStream << "username\trole" << endl;
-    // for (auto it = accountsParam->begin(); it != accountsParam->end(); it++)
-    // {
-    //     fileStream << it->first << "\t" << role << endl;
-    // }
     fileStream << username << "\t" << role << endl;
     fileStream.close();
 }
