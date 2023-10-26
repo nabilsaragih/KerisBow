@@ -58,6 +58,9 @@ int main()
     unordered_map<string, string> accounts;
     unordered_map<string, string> accountRoles;
 
+    readFromFile(&accounts);
+    readRoles(&accountRoles);
+
     directoryChecker("db");
     fileChecker("accounts.tsv", "db");
     fileChecker("accounts_role.tsv", "db");

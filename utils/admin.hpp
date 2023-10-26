@@ -12,13 +12,17 @@ void addFirst(Node *headParam)
     Node *newNode = new Node;
 
     cout << "Nama Barang: ";
-    getline(cin, namaBarang); fflush(stdin);
+    getline(cin, namaBarang);
+    fflush(stdin);
     cout << "Harga Barang: ";
-    getline(cin, hargaBarang); fflush(stdin);
+    getline(cin, hargaBarang);
+    fflush(stdin);
     cout << "Fitur Barang: ";
-    getline(cin, fiturBarang); fflush(stdin);
+    getline(cin, fiturBarang);
+    fflush(stdin);
     cout << "Deskripsi Barang: ";
-    getline(cin, deskripsiBarang); fflush(stdin);
+    getline(cin, deskripsiBarang);
+    fflush(stdin);
 
     try
     {
@@ -66,58 +70,58 @@ void menuAdmin(int *pilih, Node *headParam)
     string pilihanTemp;
 
     system("cls");
-    cout << "Selamat datang di menu admin" << endl; 
+    cout << "Selamat datang di menu admin" << endl;
     cout << "1. Tambah Barang" << endl;
     cout << "2. Lihat Barang" << endl;
     cout << "3. Ubah Barang" << endl;
     cout << "4. Hapus Barang" << endl;
     cout << "5. Tambah Admin (Prototype)" << endl;
-    cin >> pilihanTemp; fflush(stdin);
+    cout << "Masukkan pilihan anda: ";
+    cin >> pilihanTemp;
+    fflush(stdin);
 
     try
     {
         *pilih = stoi(pilihanTemp);
         switch (*pilih)
         {
-            case 1:
-                system("cls");
-                addFirst(headParam);
-                endOfFunction(1);
-                break;
-            case 2:
-                system("cls");
-                cout << "Lihat Barang" << endl;
-                endOfFunction(1);
-                break;
-            case 3:
-                system("cls");
-                cout << "Ubah Barang" << endl;
-                endOfFunction(1);
-                break;
-            case 4:
-                system("cls");
-                deleteFirst(headParam);
-                endOfFunction(1);
-                break;
-            case 5:
-                system("cls");
-                cout << "Tambah Admin" << endl;
-                endOfFunction(1);
-                break;
+        case 1:
+            system("cls");
+            addFirst(headParam);
+            endOfFunction(1);
+            break;
+        case 2:
+            system("cls");
+            cout << "Lihat Barang" << endl;
+            endOfFunction(1);
+            break;
+        case 3:
+            system("cls");
+            cout << "Ubah Barang" << endl;
+            endOfFunction(1);
+            break;
+        case 4:
+            system("cls");
+            deleteFirst(headParam);
+            endOfFunction(1);
+            break;
+        case 5:
+            system("cls");
+            cout << "Tambah Admin" << endl;
+            endOfFunction(1);
+            break;
 
-            default:
-                cout << "Pilihan tidak tersedia" << endl;
-                endOfFunction(1);
-                break;
+        default:
+            cout << "Pilihan tidak tersedia" << endl;
+            endOfFunction(1);
+            break;
         }
     }
-    catch(invalid_argument &e)
+    catch (invalid_argument &e)
     {
         cout << "Pilihan tidak tersedia" << endl;
         endOfFunction(1);
     }
-    
-
 }
 
 #endif
