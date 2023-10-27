@@ -5,6 +5,7 @@
 #include "utils/admin.hpp"
 #include "utils/customer.hpp"
 #include "utils/items.hpp"
+#include "utils/anonymousRead.hpp"
 using namespace std;
 
 void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map<string, string> *accountRolesParam, Node *headParam)
@@ -29,7 +30,7 @@ void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map
             break;
 
         case 2:
-            cout << "Lihat Barang" << endl;
+            display(headParam);
             break;
 
         case 3:
@@ -46,7 +47,7 @@ void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map
     }
     catch (invalid_argument &e)
     {
-        cout << "Pilihan tidak tersedia" << endl;
+        cout << "Mohon isi dengan pilihan yang ada!" << endl;
         endOfFunction(1);
     }
 }

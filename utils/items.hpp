@@ -2,12 +2,11 @@
 #define UTILS_ITEMS_HPP
 
 #include <bits/stdc++.h>
-#include "additional.hpp"
 
 struct Barang
 {
     string namaBarang;
-    long long int hargaBarang;
+    long long hargaBarang;
     string fiturBarang;
     string deskripsiBarang;
 };
