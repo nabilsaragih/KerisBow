@@ -164,7 +164,7 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
             endOfFunction(1);
             if (accountRolesParam->at(username) == "customer")
             {
-                menuCustomer(pilih, headParam);
+                menuCustomer(headParam);
                 return;
             }
             else if (accountRolesParam->at(username) == "admin")
