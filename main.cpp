@@ -61,6 +61,7 @@ int main()
 
     readFromFile(&accounts);
     readRoles(&accountRoles);
+    loadFromFile(&head);
 
     directoryChecker("db");
     fileChecker("accounts.tsv", "db");
