@@ -164,7 +164,7 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
             endOfFunction(1);
             if (accountRolesParam->at(username) == "customer")
             {
-                cout << "Customer" << endl;
+                menuCustomer(headParam);
                 return;
             }
             else if (accountRolesParam->at(username) == "admin")
