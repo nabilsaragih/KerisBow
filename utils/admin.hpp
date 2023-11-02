@@ -6,10 +6,62 @@
 #include "additional.hpp"
 using namespace std;
 
+// void addFirst(Node *headParam)
+// {
+//     string namaBarang, hargaBarang, fiturBarang, deskripsiBarang;
+//     Node *newNode = new Node;
+
+// cout << "Nama Barang: ";
+// getline(cin, namaBarang);
+// fflush(stdin);
+// cout << "Harga Barang: ";
+// getline(cin, hargaBarang);
+// fflush(stdin);
+// cout << "Fitur Barang: ";
+// getline(cin, fiturBarang);
+// fflush(stdin);
+// cout << "Deskripsi Barang: ";
+// getline(cin, deskripsiBarang);
+// fflush(stdin);
+
+//     try
+//     {
+//         newNode->barang.namaBarang = namaBarang;
+//         newNode->barang.hargaBarang = stoll(hargaBarang);
+//         newNode->barang.fiturBarang = fiturBarang;
+//         newNode->barang.deskripsiBarang = deskripsiBarang;
+//     }
+// catch (invalid_argument &e)
+// {
+//     cout << "Masukkan input dengan benar" << endl;
+//         endOfFunction(1);
+//     }
+
+// if (headParam == nullptr)
+// {
+//     newNode->next = nullptr;
+//     headParam = newNode;
+
+//     system("cls");
+//     cout << "Barang berhasil ditambahkan" << endl;
+// }
+// else
+// {
+//     newNode->next = headParam;
+//     headParam = newNode;
+
+//     system("cls");
+//     cout << "Barang berhasil ditambahkan" << endl;
+// }
+// }
+
 void addFirst(Node *headParam)
 {
-    string namaBarang, hargaBarang, fiturBarang, deskripsiBarang;
+    ofstream fileStream("db/items.tsv", ios::app);
+    string line, namaBarang, hargaBarang, fiturBarang, deskripsiBarang;
+
     Node *newNode = new Node;
+    Node *temp = headParam;
 
     cout << "Nama Barang: ";
     getline(cin, namaBarang);
@@ -26,10 +78,7 @@ void addFirst(Node *headParam)
 
     try
     {
-        newNode->barang.namaBarang = namaBarang;
-        newNode->barang.hargaBarang = stoll(hargaBarang);
-        newNode->barang.fiturBarang = fiturBarang;
-        newNode->barang.deskripsiBarang = deskripsiBarang;
+        fileStream << namaBarang << '\t' << hargaBarang << '\t' << fiturBarang << '\t' << deskripsiBarang << '\n';
     }
     catch (invalid_argument &e)
     {
@@ -53,6 +102,7 @@ void addFirst(Node *headParam)
         system("cls");
         cout << "Barang berhasil ditambahkan" << endl;
     }
+    fileStream.close();
 }
 
 void deleteFirst(Node *headParam)
