@@ -17,4 +17,17 @@ struct Node
     Node *next;
 };
 
+struct BarangCus
+{
+    string username;
+    string item_names;
+    int amount;
+};
+
+struct NodeTransaksi
+{
+    BarangCus barang;
+    NodeTransaksi *next;
+};
+
 #endif

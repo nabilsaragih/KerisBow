@@ -5,50 +5,47 @@
 #include <conio.h>
 #include "additional.hpp"
 #include "items.hpp"
+#include "admin.hpp"
 
 using namespace std;
-void menuCustomer(Node *headParam);
-void saveToFile(Node *headParam);
+void menuCustomer(NodeTransaksi *headParam);
+void saveToFile(NodeTransaksi *headParam);
 
 //adLast
-void addLast(Node **headParam) {
-    string namaBarang, hargaBarang, fiturBarang, deskripsiBarang;
-    Node *newNode = new Node;
+void addLast(NodeTransaksi **headParam) {
+    string username, itemNames, amount;
+    NodeTransaksi *newNodeTransaksi = new NodeTransaksi;
 
-    cout << "Nama Barang: ";
-    getline(cin, namaBarang);
+    cout << "Username: ";
+    getline(cin, username);
     fflush(stdin);
-    cout << "Harga Barang: ";
-    getline(cin, hargaBarang);
+    cout << "Nama barang yang ingin dibeli: ";
+    getline(cin, itemNames);
     fflush(stdin);
-    cout << "Fitur Barang: ";
-    getline(cin, fiturBarang);
-    fflush(stdin);
-    cout << "Deskripsi Barang: ";
-    getline(cin, deskripsiBarang);
+    cout << "Jumlah: ";
+    getline(cin, amount);
     fflush(stdin);
 
     try {
-        newNode->barang.namaBarang = namaBarang;
-        newNode->barang.hargaBarang = stoll(hargaBarang);
-        newNode->barang.fiturBarang = fiturBarang;
-        newNode->barang.deskripsiBarang = deskripsiBarang;
+        newNodeTransaksi->barang.username = username;
+        newNodeTransaksi->barang.item_names = itemNames;
+        newNodeTransaksi->barang.amount = stoi(amount);
     } catch (invalid_argument &e) {
         cout << "Masukkan input dengan benar" << endl;
         menuCustomer(*headParam);
     }
 
     if (*headParam == nullptr) {
-        newNode->next = nullptr;
-        *headParam = newNode;
+        newNodeTransaksi->next = nullptr;
+        *headParam = newNodeTransaksi;
 
     } else {
-        Node *temp = *headParam;
+        NodeTransaksi *temp = *headParam;
         while (temp->next != nullptr) {
             temp = temp->next;
         }
-        temp->next = newNode;
-        newNode->next = nullptr;
+        temp->next = newNodeTransaksi;
+        newNodeTransaksi->next = nullptr;
     }
     saveToFile(*headParam);
     system("cls");
@@ -58,8 +55,8 @@ void addLast(Node **headParam) {
 
 
 // DeleteFirst
-void deleteFirst(Node **headParam) {
-    Node *temp = *headParam;
+void deleteFirst(NodeTransaksi **headParam) {
+    NodeTransaksi *temp = *headParam;
     if (temp == nullptr) {
         cout << "Tidak ada barang" << endl;
         cout << "Silahkan tambah barang terlebih dahulu" << endl;
@@ -72,48 +69,45 @@ void deleteFirst(Node **headParam) {
     saveToFile(*headParam);
 }
 
-void saveToFile(Node *head){
-    ofstream DataNode;
-    DataNode.open("db/items.tsv");
-    Node *temp = head;
+void saveToFile(NodeTransaksi *head){
+    ofstream DataNodeTransaksi;
+    DataNodeTransaksi.open("db/transactions.tsv");
+    NodeTransaksi *temp = head;
     while (temp != NULL){
-        DataNode << temp->barang.namaBarang << "\t" 
-        << temp->barang.hargaBarang << "\t"
-         << temp->barang.fiturBarang << "\t" 
-         << temp->barang.deskripsiBarang<< "\t" << endl;
+        DataNodeTransaksi << temp->barang.username << "\t" 
+        << temp->barang.item_names << "\t"
+        << temp->barang.amount<< "\t" << endl;
         temp = temp->next;
     }
-    DataNode.close();
+    DataNodeTransaksi.close();
 }
 
 //LoadFrom File
-void loadFromFile(Node **headParam) {
-    ifstream dataNode("db/items.tsv");
-    if (!dataNode.is_open()) {
+void loadFromFile(NodeTransaksi **headParam) {
+    ifstream dataNodeTransaksi("db/transactions.tsv");
+    if (!dataNodeTransaksi.is_open()) {
         cout << "Gagal membuka file items.tsv" << endl;
         return;
     }
 
-    string line, nama, harga, fitur, deskripsi;
-    while (getline(dataNode, line)) {
+    string line, username, itemNames, amount;
+    while (getline(dataNodeTransaksi, line)) {
         stringstream ss(line);
-        if (getline(ss, nama, '\t') &&
-            getline(ss, harga, '\t') &&
-            getline(ss, fitur, '\t') &&
-            getline(ss, deskripsi, '\t')) {
+        if (getline(ss, username, '\t') &&
+            getline(ss, itemNames, '\t') &&
+            getline(ss, amount, '\t')) {
 
             try {
-                Node *barang = new Node;
-                barang->barang.namaBarang = nama;
-                barang->barang.hargaBarang = stoll(harga);
-                barang->barang.fiturBarang = fitur;
-                barang->barang.deskripsiBarang = deskripsi;
+                NodeTransaksi *barang = new NodeTransaksi;
+                barang->barang.username = username;
+                barang->barang.item_names = itemNames;
+                barang->barang.amount = stoi(amount);
                 barang->next = nullptr;
 
                 if (*headParam == nullptr) {
                     *headParam = barang;
                 } else {
-                    Node *temp = *headParam;
+                    NodeTransaksi *temp = *headParam;
                     while (temp->next != nullptr) {
                         temp = temp->next;
                     }
@@ -125,24 +119,23 @@ void loadFromFile(Node **headParam) {
         }
     }
 
-    dataNode.close();
+    dataNodeTransaksi.close();
 }
 
 
 // DisplayData
-void displayData(Node* head) {
+void displayData(NodeTransaksi* head) {
     if (head == NULL) {
         cout << "Tidak ada barang" << endl;
         cout << "Silahkan tambah barang terlebih dahulu" << endl;
         return;
     }
-    Node* temp = head;
+    NodeTransaksi* temp = head;
     int no = 0;
     while (temp != nullptr) {
-        cout << "Nama Barang: " << temp->barang.namaBarang << endl;
-        cout << "Harga Barang: " << temp->barang.hargaBarang << endl;
-        cout << "Fitur Barang: " << temp->barang.fiturBarang << endl;
-        cout << "Deskripsi Barang: " << temp->barang.deskripsiBarang << endl;
+        cout << "Nama Barang: " << temp->barang.username << endl;
+        cout << "Harga Barang: " << temp->barang.item_names << endl;
+        cout << "Fitur Barang: " << temp->barang.amount << endl;
         cout << endl;
         no++;
         temp = temp->next;
@@ -150,7 +143,7 @@ void displayData(Node* head) {
     cout << "TAMPILAN MASIH BURIK !!, NEXT KUPERBAIKI (~Agus)" << endl;
 }
 
-void menuCustomer(Node *headParam)
+void menuCustomer(NodeTransaksi *headParam)
 {
     string pilihanTemp; int pilih;
 
@@ -172,6 +165,7 @@ void menuCustomer(Node *headParam)
         {
         case 1:
             system("cls");
+            displayTSV();
             addLast(&headParam);
             menuCustomer(headParam);
             break;
