@@ -6,59 +6,10 @@
 #include "additional.hpp"
 using namespace std;
 
-// void addFirst(Node *headParam)
-// {
-//     string namaBarang, hargaBarang, fiturBarang, deskripsiBarang;
-//     Node *newNode = new Node;
-
-// cout << "Nama Barang: ";
-// getline(cin, namaBarang);
-// fflush(stdin);
-// cout << "Harga Barang: ";
-// getline(cin, hargaBarang);
-// fflush(stdin);
-// cout << "Fitur Barang: ";
-// getline(cin, fiturBarang);
-// fflush(stdin);
-// cout << "Deskripsi Barang: ";
-// getline(cin, deskripsiBarang);
-// fflush(stdin);
-
-//     try
-//     {
-//         newNode->barang.namaBarang = namaBarang;
-//         newNode->barang.hargaBarang = stoll(hargaBarang);
-//         newNode->barang.fiturBarang = fiturBarang;
-//         newNode->barang.deskripsiBarang = deskripsiBarang;
-//     }
-// catch (invalid_argument &e)
-// {
-//     cout << "Masukkan input dengan benar" << endl;
-//         endOfFunction(1);
-//     }
-
-// if (headParam == nullptr)
-// {
-//     newNode->next = nullptr;
-//     headParam = newNode;
-
-//     system("cls");
-//     cout << "Barang berhasil ditambahkan" << endl;
-// }
-// else
-// {
-//     newNode->next = headParam;
-//     headParam = newNode;
-
-//     system("cls");
-//     cout << "Barang berhasil ditambahkan" << endl;
-// }
-// }
-
-void addFirst(Node *headParam)
+// add first ke stack
+void addFirst(Node *&headParam)
 {
-    ofstream fileStream("db/items.tsv", ios::app);
-    string line, namaBarang, hargaBarang, fiturBarang, deskripsiBarang;
+    string namaBarang, hargaBarang, fiturBarang, deskripsiBarang;
 
     Node *newNode = new Node;
     Node *temp = headParam;
@@ -76,15 +27,10 @@ void addFirst(Node *headParam)
     getline(cin, deskripsiBarang);
     fflush(stdin);
 
-    try
-    {
-        fileStream << namaBarang << '\t' << hargaBarang << '\t' << fiturBarang << '\t' << deskripsiBarang << '\n';
-    }
-    catch (invalid_argument &e)
-    {
-        cout << "Masukkan input dengan benar" << endl;
-        endOfFunction(1);
-    }
+    newNode->barang.namaBarang = namaBarang;
+    newNode->barang.hargaBarang = stoll(hargaBarang);
+    newNode->barang.fiturBarang = fiturBarang;
+    newNode->barang.deskripsiBarang = deskripsiBarang;
 
     if (headParam == nullptr)
     {
@@ -102,11 +48,17 @@ void addFirst(Node *headParam)
         system("cls");
         cout << "Barang berhasil ditambahkan" << endl;
     }
-    fileStream.close();
 }
 
-void deleteFirst(Node *headParam)
+// del first ke stack (data kehapus, tapi infinity loop pas display stack.)
+void deleteFirst(Node *&headParam)
 {
+    if (headParam == nullptr)
+    {
+        cout << "Stack kosong" << endl;
+        return;
+    }
+
     Node *temp = headParam;
     headParam = headParam->next;
     delete temp;
@@ -115,6 +67,52 @@ void deleteFirst(Node *headParam)
     cout << "Barang berhasil dihapus" << endl;
 }
 
+// export data yang ada di stack ke TSV buat long-term storage
+void exportToFile(Node *head)
+{
+    ofstream fileStream("db/items.tsv");
+    Node *current = head;
+    while (current != nullptr)
+    {
+        fileStream << current->barang.namaBarang << '\t' << current->barang.hargaBarang << '\t' << current->barang.fiturBarang << '\t' << current->barang.deskripsiBarang << '\n';
+        current = current->next;
+    }
+    fileStream.close();
+}
+
+// import data yang ada di TSV ke stack
+void importFromFile(Node *&head)
+{
+    ifstream fileStream("db/items.tsv");
+    if (!fileStream.is_open())
+    {
+        cout << "File not found!" << endl;
+        return;
+    }
+
+    string line;
+    while (getline(fileStream, line))
+    {
+        stringstream ss(line);
+        string namaBarang, hargaBarang, fiturBarang, deskripsiBarang;
+        getline(ss, namaBarang, '\t');
+        getline(ss, hargaBarang, '\t');
+        getline(ss, fiturBarang, '\t');
+        getline(ss, deskripsiBarang, '\t');
+
+        Node *newNode = new Node;
+        newNode->barang.namaBarang = namaBarang;
+        newNode->barang.hargaBarang = stoll(hargaBarang);
+        newNode->barang.fiturBarang = fiturBarang;
+        newNode->barang.deskripsiBarang = deskripsiBarang;
+
+        newNode->next = head;
+        head = newNode;
+    }
+    fileStream.close();
+}
+
+// liat data yg tersimpan di TSV
 void displayTSV()
 {
     ifstream fileStream("db/items.tsv");
@@ -146,6 +144,21 @@ void displayTSV()
     fileStream.close();
 }
 
+// liat data yg tersimpan di stack
+void displayLinkedList(Node *head)
+{
+    Node *current = head;
+    while (current != nullptr)
+    {
+        cout << "Nama Barang: " << current->barang.namaBarang << endl;
+        cout << "Harga Barang: " << current->barang.hargaBarang << endl;
+        cout << "Fitur Barang: " << current->barang.fiturBarang << endl;
+        cout << "Deskripsi Barang: " << current->barang.deskripsiBarang << endl;
+        cout << "-----------------------" << endl;
+        current = current->next;
+    }
+}
+
 void menuAdmin(int *pilih, Node *headParam)
 {
     string pilihanTemp;
@@ -169,11 +182,13 @@ void menuAdmin(int *pilih, Node *headParam)
         case 1:
             system("cls");
             addFirst(headParam);
+            exportToFile(headParam);
             endOfFunction(1);
             break;
         case 2:
             system("cls");
-            displayTSV();
+            importFromFile(headParam);
+            displayLinkedList(headParam);
             cout << "Tekan apapun untuk lanjut" << endl;
             getch();
             endOfFunction(1);
@@ -186,11 +201,19 @@ void menuAdmin(int *pilih, Node *headParam)
         case 4:
             system("cls");
             deleteFirst(headParam);
+            exportToFile(headParam);
             endOfFunction(1);
             break;
         case 5:
             system("cls");
             cout << "Tambah Admin" << endl;
+            endOfFunction(1);
+            break;
+        case 99:
+            system("cls");
+            displayTSV();
+            cout << "Tekan apapun untuk lanjut" << endl;
+            getch();
             endOfFunction(1);
             break;
 
