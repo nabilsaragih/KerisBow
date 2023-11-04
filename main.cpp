@@ -55,18 +55,20 @@ void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map
 int main()
 {
     Node *head = nullptr;
+    NodeTransaksi *headTransaksi = nullptr;
     int pilihan = 0;
     unordered_map<string, string> accounts;
     unordered_map<string, string> accountRoles;
 
     readFromFile(&accounts);
     readRoles(&accountRoles);
-    loadFromFile(&head);
+    loadFromFile(&headTransaksi);
 
     directoryChecker("db");
     fileChecker("accounts.tsv", "db");
     fileChecker("accounts_role.tsv", "db");
     fileChecker("items.tsv", "db");
+    fileChecker("transactions.tsv", "db");
 
     while (true)
     {

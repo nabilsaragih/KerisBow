@@ -36,7 +36,7 @@ void fileChecker(string file, string directory)
         else if (file == "transactions.tsv")
         {
             ofstream fileStream(directory + "/" + file);
-            fileStream << "username\titem_id\tamount" << endl;
+            fileStream << "username\titem_names\tamount" << endl;
             fileStream.close();
         }
         else if (file == "accounts_role.tsv")

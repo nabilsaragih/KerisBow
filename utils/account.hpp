@@ -148,6 +148,7 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, u
 
 void login(unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, int *pilih, Node *headParam)
 {
+    NodeTransaksi *headTransaksi = nullptr;
     string username, password;
     cout << "Username: ";
     cin >> username;
@@ -166,7 +167,7 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
             endOfFunction(1);
             if (accountRolesParam->at(username) == "customer")
             {
-                menuCustomer(headParam);
+                menuCustomer(headTransaksi);
                 return;
             }
             else if (accountRolesParam->at(username) == "admin")
