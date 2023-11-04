@@ -156,6 +156,8 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
     cin >> password;
     fflush(stdin);
 
+    readRoles(accountRolesParam);
+
     if (accountsParam->find(username) != accountsParam->end())
     {
         if (accountsParam->at(username) == password)
