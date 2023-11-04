@@ -115,6 +115,37 @@ void deleteFirst(Node *headParam)
     cout << "Barang berhasil dihapus" << endl;
 }
 
+void displayTSV()
+{
+    ifstream fileStream("db/items.tsv");
+    string line;
+
+    while (getline(fileStream, line))
+    {
+        istringstream iss(line);
+        vector<string> tokens;
+        string token;
+        while (getline(iss, token, '\t'))
+        {
+            tokens.push_back(token);
+        }
+
+        if (tokens.size() == 4)
+        {
+            cout << "Nama: " << tokens[0] << endl;
+            cout << "Harga: " << tokens[1] << endl;
+            cout << "Fitur: " << tokens[2] << endl;
+            cout << "Deskripsi: " << tokens[3] << endl;
+            cout << "---------------------------------" << endl;
+        }
+        else
+        {
+            cout << "Terjadi kerusakan pada data. Data tidak dapat ditampilkan" << endl;
+        }
+    }
+    fileStream.close();
+}
+
 void menuAdmin(int *pilih, Node *headParam)
 {
     string pilihanTemp;
@@ -142,7 +173,9 @@ void menuAdmin(int *pilih, Node *headParam)
             break;
         case 2:
             system("cls");
-            cout << "Lihat Barang" << endl;
+            displayTSV();
+            cout << "Tekan apapun untuk lanjut" << endl;
+            getch();
             endOfFunction(1);
             break;
         case 3:
