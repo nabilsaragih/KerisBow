@@ -70,7 +70,7 @@ void deleteFirst(Node *&headParam)
 // export data yang ada di stack ke TSV buat long-term storage
 void exportToFile(Node *head)
 {
-    ofstream fileStream("db/items.tsv");
+    ofstream fileStream("db/items.tsv", ios::app);
     Node *current = head;
     while (current != nullptr)
     {

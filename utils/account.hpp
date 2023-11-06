@@ -6,9 +6,10 @@
 #include "additional.hpp"
 #include "admin.hpp"
 #include "customer.hpp"
+#include "items.hpp"
 using namespace std;
 
-void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam);
+void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi);
 
 void addToFile(unordered_map<string, string> *accountsParam)
 {
@@ -108,7 +109,7 @@ void registerAdmin(unordered_map<string, string> *accountsParam)
     endOfFunction(1);
 }
 
-void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, unordered_map<string, string> *accountsRolesParam, Node *headParam)
+void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, unordered_map<string, string> *accountsRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
 {
     string username, password, pilihanTemp;
 
@@ -135,7 +136,7 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, u
         default:
             cout << "Pilihan tidak tersedia" << endl;
             endOfFunction(1);
-            menuLogin(pilih, accountsParam, accountsRolesParam, headParam);
+            menuLogin(pilih, accountsParam, accountsRolesParam, headParam, headTransaksi);
             break;
         }
     }
@@ -146,9 +147,8 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, u
     }
 }
 
-void login(unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, int *pilih, Node *headParam)
+void login(unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, int *pilih, Node *headParam, NodeTransaksi *headTransaksi)
 {
-    NodeTransaksi *headTransaksi = nullptr;
     string username, password;
     cout << "Username: ";
     cin >> username;
@@ -167,7 +167,7 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
             endOfFunction(1);
             if (accountRolesParam->at(username) == "customer")
             {
-                menuCustomer(headTransaksi);
+                menuCustomer(headTransaksi, headParam);
                 return;
             }
             else if (accountRolesParam->at(username) == "admin")
@@ -182,7 +182,7 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
     endOfFunction(1);
 }
 
-void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam)
+void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
 {
     string pilihanTemp;
 
@@ -199,12 +199,12 @@ void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unorder
         {
         case 1:
             system("cls");
-            login(accountsParam, accountRolesParam, pilih, headParam);
+            login(accountsParam, accountRolesParam, pilih, headParam, headTransaksi);
             break;
 
         case 2:
             system("cls");
-            registerAccount(accountsParam, pilih, accountRolesParam, headParam);
+            registerAccount(accountsParam, pilih, accountRolesParam, headParam, headTransaksi);
             break;
 
         default:
