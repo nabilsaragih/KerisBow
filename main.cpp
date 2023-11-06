@@ -8,7 +8,7 @@
 #include "utils/anonymousRead.hpp"
 using namespace std;
 
-void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map<string, string> *accountRolesParam, Node *headParam)
+void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
 {
     string pilihanTemp;
 
@@ -26,7 +26,7 @@ void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map
         switch (*pilih)
         {
         case 1:
-            menuLogin(pilih, accountParam, accountRolesParam, headParam);
+            menuLogin(pilih, accountParam, accountRolesParam, headParam, headTransaksi);
             break;
 
         case 2:
@@ -62,7 +62,8 @@ int main()
 
     readFromFile(&accounts);
     readRoles(&accountRoles);
-    loadFromFile(&headTransaksi);
+    loadFromFile(headTransaksi);
+    importFromFile(head);
 
     directoryChecker("db");
     fileChecker("accounts.tsv", "db");
@@ -72,7 +73,7 @@ int main()
 
     while (true)
     {
-        menu(&pilihan, &accounts, &accountRoles, head);
+        menu(&pilihan, &accounts, &accountRoles, head, headTransaksi);
     }
 
     return 0;
