@@ -6,7 +6,7 @@
 struct Barang
 {
     string namaBarang;
-    long long hargaBarang;
+    string hargaBarang;
     string fiturBarang;
     string deskripsiBarang;
 };
