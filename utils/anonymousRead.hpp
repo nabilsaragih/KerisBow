@@ -22,7 +22,7 @@ void addLast(Node *headParam)
         getline(lineStream, deskripsiBarang, '\t');
 
         newNode->barang.namaBarang = namaBarang;
-        newNode->barang.hargaBarang = stoll(hargaBarang);
+        newNode->barang.hargaBarang = hargaBarang;
         newNode->barang.fiturBarang = fiturBarang;
         newNode->barang.deskripsiBarang = deskripsiBarang;
 

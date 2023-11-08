@@ -6,7 +6,7 @@
 #include "additional.hpp"
 using namespace std;
 
-// add first ke stack
+// add first ke LL
 void addFirst(Node *&headParam)
 {
     string namaBarang, hargaBarang, fiturBarang, deskripsiBarang;
@@ -28,7 +28,7 @@ void addFirst(Node *&headParam)
     fflush(stdin);
 
     newNode->barang.namaBarang = namaBarang;
-    newNode->barang.hargaBarang = stoll(hargaBarang);
+    newNode->barang.hargaBarang = hargaBarang;
     newNode->barang.fiturBarang = fiturBarang;
     newNode->barang.deskripsiBarang = deskripsiBarang;
 
@@ -50,24 +50,90 @@ void addFirst(Node *&headParam)
     }
 }
 
-// del first ke stack (data kehapus, tapi infinity loop pas display stack.)
-void deleteFirst(Node *&headParam)
+// del spesifik menggunakan nama
+void deleteSpecific(Node *&headParam)
 {
     if (headParam == nullptr)
     {
-        cout << "Stack kosong" << endl;
+        cout << "Data kosong" << endl;
         return;
     }
 
-    Node *temp = headParam;
-    headParam = headParam->next;
-    delete temp;
+    string target;
+    cout << "Masukkan nama barang yang ingin dihapus : ";
+    getline(cin, target);
+    cin.sync();
 
-    system("cls");
+    if (headParam->barang.namaBarang == target)
+    {
+        Node *temp = headParam;
+        headParam = headParam->next;
+        delete temp;
+
+        cout << "Barang berhasil dihapus" << endl;
+        return;
+    }
+
+    Node *current = headParam;
+    while (current->next != nullptr)
+    {
+        if (current->next->barang.namaBarang == target)
+        {
+            Node *temp = current->next;
+            current->next = temp->next;
+            delete temp;
+
+            cout << "Barang berhasil dihapus" << endl;
+            return;
+        }
+        current = current->next;
+    }
     cout << "Barang berhasil dihapus" << endl;
 }
 
-// export data yang ada di stack ke TSV buat long-term storage
+// edit/update/ubah spesifik menggunakan nama
+void updateSpecific(Node *&headParam)
+{
+    if (headParam == nullptr)
+    {
+        cout << "Data kosong" << endl;
+        return;
+    }
+
+    string target, namaBarang, hargaBarang, fiturBarang, deskripsiBarang;
+    cout << "Masukkan nama barang yang ingin dihapus : ";
+    getline(cin, target);
+    cin.sync();
+
+    cout << "Masukkan nama barang baru : ";
+    getline(cin, namaBarang);
+    cout << "Masukkan harga barang baru : ";
+    getline(cin, hargaBarang);
+    cout << "Masukkan fitur barang baru : ";
+    getline(cin, fiturBarang);
+    cout << "Masukkan deskripsi barang baru : ";
+    getline(cin, deskripsiBarang);
+
+    Node *current = headParam;
+    while (current != nullptr)
+    {
+        if (current->barang.namaBarang == target)
+        {
+            current->barang.namaBarang = namaBarang;
+            current->barang.hargaBarang = hargaBarang;
+            current->barang.fiturBarang = fiturBarang;
+            current->barang.deskripsiBarang = deskripsiBarang;
+
+            cout << "Barang berhasil diubah" << endl;
+            return;
+        }
+        current = current->next;
+    }
+
+    cout << "Barang tidak ditemukan." << endl;
+}
+
+// export data yang ada di LL ke TSV buat long-term storage
 void exportToFile(Node *head)
 {
     ofstream fileStream("db/items.tsv", ios::app);
@@ -80,7 +146,7 @@ void exportToFile(Node *head)
     fileStream.close();
 }
 
-// import data yang ada di TSV ke stack
+// import data yang ada di TSV ke LL
 void importFromFile(Node *&head)
 {
     ifstream fileStream("db/items.tsv");
@@ -102,13 +168,20 @@ void importFromFile(Node *&head)
 
         Node *newNode = new Node;
         newNode->barang.namaBarang = namaBarang;
-        newNode->barang.hargaBarang = stoll(hargaBarang);
+        newNode->barang.hargaBarang = hargaBarang;
         newNode->barang.fiturBarang = fiturBarang;
         newNode->barang.deskripsiBarang = deskripsiBarang;
 
         newNode->next = head;
         head = newNode;
     }
+    fileStream.close();
+}
+
+// clear  semua data di dalam tsv
+void clearFile(const string &filename)
+{
+    ofstream fileStream(filename, ofstream::trunc);
     fileStream.close();
 }
 
@@ -144,7 +217,7 @@ void displayTSV()
     fileStream.close();
 }
 
-// liat data yg tersimpan di stack
+// liat data yg tersimpan di LL
 void displayLinkedList(Node *head)
 {
     Node *current = head;
@@ -170,6 +243,7 @@ void menuAdmin(int *pilih, Node *headParam)
     cout << "3. Ubah Barang" << endl;
     cout << "4. Hapus Barang" << endl;
     cout << "5. Tambah Admin (Prototype)" << endl;
+    cout << "0. Keluar" << endl;
     cout << "Masukkan pilihan anda: ";
     cin >> pilihanTemp;
     fflush(stdin);
@@ -182,44 +256,51 @@ void menuAdmin(int *pilih, Node *headParam)
         case 1:
             system("cls");
             addFirst(headParam);
-            exportToFile(headParam);
-            endOfFunction(1);
+            system("pause");
+            menuAdmin(pilih, headParam);
             break;
         case 2:
             system("cls");
-            importFromFile(headParam);
             displayLinkedList(headParam);
-            cout << "Tekan apapun untuk lanjut" << endl;
-            getch();
-            endOfFunction(1);
+            system("pause");
+            menuAdmin(pilih, headParam);
             break;
         case 3:
             system("cls");
-            cout << "Ubah Barang" << endl;
-            endOfFunction(1);
+            displayLinkedList(headParam);
+            updateSpecific(headParam);
+            system("pause");
+            menuAdmin(pilih, headParam);
             break;
         case 4:
             system("cls");
-            deleteFirst(headParam);
-            exportToFile(headParam);
-            endOfFunction(1);
+            displayLinkedList(headParam);
+            deleteSpecific(headParam);
+            system("pause");
+            menuAdmin(pilih, headParam);
             break;
         case 5:
             system("cls");
             cout << "Tambah Admin" << endl;
             endOfFunction(1);
             break;
+        case 0:
+            cout << "Terima kasih telah menggunakan KerisBow" << endl;
+            clearFile("db/items.tsv");
+            exportToFile(headParam);
+            endOfFunction(1);
+            exit(0);
+            break;
         case 99:
             system("cls");
             displayTSV();
-            cout << "Tekan apapun untuk lanjut" << endl;
-            getch();
-            endOfFunction(1);
+            system("pause");
+            menuAdmin(pilih, headParam);
             break;
 
         default:
             cout << "Pilihan tidak tersedia" << endl;
-            endOfFunction(1);
+            menuAdmin(pilih, headParam);
             break;
         }
     }
