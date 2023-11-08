@@ -11,11 +11,15 @@ using namespace std;
 void menuCustomer(NodeTransaksi *headParam, Node *headx);
 void saveToFile(NodeTransaksi *headParam);
 
-void addLast(NodeTransaksi *headParam, Node *itemsList) {
+void addFirst(NodeTransaksi *headParam, Node *itemsList) {
     string username;
     int itemNumber, amount;
     cout << "Username: ";
     getline(cin, username);
+    if(username == "") {
+        cout << "Username tidak boleh kosong" << endl;
+        return;
+    }
 
     cout << "Pilih nomor barang yang ingin dibeli: ";
 
@@ -54,123 +58,160 @@ void addLast(NodeTransaksi *headParam, Node *itemsList) {
     newNodeTransaksi->next = nullptr;
 
 
-    if (headParam == nullptr) {
+    if (headParam == nullptr)
+    {
+        newNodeTransaksi->next = nullptr;
         headParam = newNodeTransaksi;
-    } else {
-        NodeTransaksi *temp = headParam;
-        while (temp->next != nullptr) {
-            temp = temp->next;
-        }
-        temp->next = newNodeTransaksi;
+
+        system("cls");
+        cout << "Barang berhasil ditambahkan" << endl;
+    }
+    else
+    {
+        newNodeTransaksi->next = headParam;
+        headParam = newNodeTransaksi;
+
+        system("cls");
+        cout << "Barang berhasil ditambahkan" << endl;
     }
     saveToFile(headParam);
-
-    cout << "Barang berhasil ditambahkan"; 
-    getch();
-    cout << endl;
+    system("pause");
     menuCustomer(headParam, itemsList);
 }
 
 
 // DeleteFirst
-void deleteFirst(NodeTransaksi *headParam) {
-    NodeTransaksi *temp = headParam;
-    if (temp == nullptr) {
-        cout << "Tidak ada barang" << endl;
-        cout << "Silahkan tambah barang terlebih dahulu" << endl;
-        return;
-    } else {
-        headParam = temp->next;
-        delete temp;
-        cout << "Barang berhasil dihapus" << endl;
+void deleteFirst(NodeTransaksi **headParam, int idx) {
+    if(*headParam  == NULL){
+        cout << "Anda belum memesan Barang" << endl;
+        cout << "Barang kosong......" << endl;
+        system("pause");
+        menuCustomer(*headParam, NULL);
     }
-    saveToFile(headParam);
+    int count = 0;
+    NodeTransaksi *temp = *headParam;
+    while (temp != NULL) {
+        count++;
+        temp = temp->next;
+    }
+
+    if (idx < 1 || idx > count) {
+        cout << "Input diluar rentang yang valid" << endl;
+        system("pause");
+        menuCustomer(*headParam, NULL);
+        return;
+    }
+    temp = *headParam;
+    for (int i = 1; i < idx - 1; i++) {
+        temp = temp->next;
+    }
+    NodeTransaksi *deletedNode = temp->next;
+    temp->next = deletedNode->next;
+    delete deletedNode;
+    deletedNode = NULL;
+    saveToFile(*headParam);
+
+    cout << "\n---Barang Berhasil Dihapus---" << endl;
+    system("pause");
+    menuCustomer(*headParam, NULL);
 }
 
 void saveToFile(NodeTransaksi *head){
-    ofstream DataNodeTransaksi;
-    DataNodeTransaksi.open("db/transactions.tsv");
-    NodeTransaksi *temp = head;
-    while (temp != NULL){
-        DataNodeTransaksi << temp->barang.username << "\t" 
-        << temp->barang.item_names << "\t"
-        << temp->barang.amount<< "\t" << endl;
-        temp = temp->next;
+    ofstream fileStream("db/transactions.tsv");
+    NodeTransaksi *current = head;
+    while (current != nullptr)
+    {
+        fileStream 
+        << current->barang.username << '\t' 
+        << current->barang.item_names << '\t' 
+        << current->barang.amount << '\n';
+        current = current->next;
     }
-    DataNodeTransaksi.close();
+    fileStream.close();
 }
 
 //LoadFrom File
-void loadFromFile(NodeTransaksi *headParam) {
-    ifstream dataNodeTransaksi("db/transactions.tsv");
-    if (!dataNodeTransaksi.is_open()) {
-        cout << "Gagal membuka file items.tsv" << endl;
+void importFromFile(NodeTransaksi *&head)
+{
+    ifstream fileStream("db/Transactions.tsv");
+    if (!fileStream.is_open())
+    {
+        cout << "File not found!" << endl;
         return;
     }
 
-    string line, username, itemNames, amount;
-    while (getline(dataNodeTransaksi, line)) {
+    string line;
+    while (getline(fileStream, line))
+    {
         stringstream ss(line);
+        string username, item_names, amount;
         if (getline(ss, username, '\t') &&
-            getline(ss, itemNames, '\t') &&
-            getline(ss, amount, '\t')) {
-
-            try {
-                NodeTransaksi *barang = new NodeTransaksi;
-                barang->barang.username = username;
-                barang->barang.item_names = itemNames;
-                barang->barang.amount = stoi(amount);
-                barang->next = nullptr;
-
-                if (headParam == nullptr) {
-                    headParam = barang;
-                } else {
-                    NodeTransaksi *temp = headParam;
-                    while (temp->next != nullptr) {
-                        temp = temp->next;
-                    }
-                    temp->next = barang;
-                }
-            } catch (const std::invalid_argument& e) {
-                cout << "Kesalahan: Konversi harga gagal. Data dilewati." << endl;
+            getline(ss, item_names, '\t') &&
+            getline(ss, amount, '\t'))
+        {
+            NodeTransaksi *newNodeTransaksi = new NodeTransaksi;
+            newNodeTransaksi->barang.username = username;
+            newNodeTransaksi->barang.item_names = item_names;
+            
+            // Menggunakan try-catch untuk mengatasi pengecualian yang mungkin terjadi saat mengonversi 'amount' ke integer.
+            try
+            {
+                newNodeTransaksi->barang.amount = stoi(amount);
             }
+            catch (const invalid_argument& e)
+            {
+                cout << "Invalid integer value in the file: " << e.what() << endl;
+                delete newNodeTransaksi;
+                continue; // Lanjutkan ke iterasi berikutnya jika ada kesalahan
+            }
+
+            newNodeTransaksi->next = head;
+            head = newNodeTransaksi;
+        }
+        else
+        {
+            cout << "Invalid line format in the file." << endl;
         }
     }
-
-    dataNodeTransaksi.close();
+    fileStream.close();
 }
 
 
 // DisplayData
-void displayData(NodeTransaksi* head) {
-    if (head == NULL) {
+void displayData(NodeTransaksi *head)
+{
+    if (head == nullptr)
+    {
         cout << "Tidak ada barang" << endl;
         cout << "Silahkan tambah barang terlebih dahulu" << endl;
         return;
     }
-    NodeTransaksi* temp = head;
-    int no = 0;
-    while (temp != nullptr) {
-        cout << "Nama Barang: " << temp->barang.username << endl;
-        cout << "Harga Barang: " << temp->barang.item_names << endl;
-        cout << "Fitur Barang: " << temp->barang.amount << endl;
-        cout << endl;
-        no++;
-        temp = temp->next;
+    int counter = 1;
+    NodeTransaksi *current = head;
+    while (current != nullptr)
+    {
+        cout << "----------------------------------------------" << endl;
+        cout << "Barang ke-" << counter << endl;
+        cout << "----------------------------------------------" << endl;
+        cout << "Nama Pembeli          : " << current->barang.username << endl;
+        cout << "Nama Barang yg dibeli : " << current->barang.item_names << endl;
+        cout << "Jumlah Beli           : " << current->barang.amount << endl;
+        cout << "----------------------------------------------" << endl;
+        current = current->next;
+        counter++;
     }
-    cout << "TAMPILAN MASIH BURIK !!, NEXT KUPERBAIKI (~Agus)" << endl;
 }
 
 void menuCustomer(NodeTransaksi *headParam, Node *headx)
 {
-    string pilihanTemp; int pilih;
+    string pilihanTemp, temp; int pilih,idx;
 
     system("cls");
     cout << "Selamat datang di menu customer" << endl;
     cout << "1. Tambah Barang" << endl;
-    cout << "2. Lihat Barang" << endl;
-    cout << "3. Ubah Barang (Coming Soon)" << endl;
-    cout << "4. Hapus Barang" << endl;
+    cout << "2. Keranjang" << endl;
+    cout << "3. Checkout" << endl;
+    cout << "4. Hapus Barang di Keranjang" << endl;
     cout << "0. Keluar" << endl;
     cout << "Masukkan pilihan anda: ";
     cin >> pilihanTemp;
@@ -183,25 +224,33 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
         {
         case 1:
             system("cls");
-            displayTSV();
-            addLast(headParam, headx);
+            displayLinkedList(headx);
+            addFirst(headParam, headx);
             menuCustomer(headParam, headx);
             break;
         case 2:
             system("cls");
             displayData(headParam);
-            cout<<"\nTekan Enter untuk kembali ke menu";getch();cout<<endl;
+            system("pause");
             menuCustomer(headParam, headx);
             break;
         case 3:
             system("cls");
-            cout << "Ubah Barang" << endl;
+            displayData(headParam);
+            system("pause");
             menuCustomer(headParam, headx);
             break;
         case 4:
             system("cls");
-            deleteFirst(headParam);
-            menuCustomer(headParam, headx);
+            displayData(headParam);
+            try{
+                cout << "\nMasukkan pilihan : "; getline(cin, temp);
+                idx = stoi(temp);
+                deleteFirst(&headParam, idx);
+            }catch(invalid_argument &e){
+                cout<<"Inputan harus Integer";getch();cout<<endl;
+                menuCustomer(headParam, headx);
+            }
             break;
         case 0:
             cout << "Terima kasih telah menggunakan KerisBow" << endl;
