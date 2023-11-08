@@ -31,6 +31,7 @@ void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map
 
         case 2:
             display(headParam);
+            system("pause");
             break;
 
         case 3:
@@ -62,7 +63,7 @@ int main()
 
     readFromFile(&accounts);
     readRoles(&accountRoles);
-    loadFromFile(headTransaksi);
+    importFromFile(headTransaksi);
     importFromFile(head);
 
     directoryChecker("db");
@@ -70,6 +71,8 @@ int main()
     fileChecker("accounts_role.tsv", "db");
     fileChecker("items.tsv", "db");
     fileChecker("transactions.tsv", "db");
+
+    
 
     while (true)
     {
