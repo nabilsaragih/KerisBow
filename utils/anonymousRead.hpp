@@ -49,14 +49,23 @@ void display(Node *headParam)
     addLast(headParam);
 
     Node *temp = headParam;
-    while (temp != nullptr)
+
+    if (temp->barang.namaBarang == "nama")
     {
-        cout << "Nama Barang: " << temp->barang.namaBarang << endl;
-        cout << "Harga Barang: " << temp->barang.hargaBarang << endl;
-        cout << "Fitur Barang: " << temp->barang.fiturBarang << endl;
-        cout << "Deskripsi Barang: " << temp->barang.deskripsiBarang << endl;
-        cout << endl;
-        temp = temp->next;
+        cout << "Tidak ada barang yang tersedia" << endl;
+        return;
+    }
+    else
+    {
+        while (temp != nullptr)
+        {
+            cout << "Nama Barang: " << temp->barang.namaBarang << endl;
+            cout << "Harga Barang: " << temp->barang.hargaBarang << endl;
+            cout << "Fitur Barang: " << temp->barang.fiturBarang << endl;
+            cout << "Deskripsi Barang: " << temp->barang.deskripsiBarang << endl;
+            cout << endl;
+            temp = temp->next;
+        }
     }
 }
 
