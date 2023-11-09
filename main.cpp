@@ -57,6 +57,7 @@ int main()
 {
     Node *head = nullptr;
     NodeTransaksi *headTransaksi = nullptr;
+    // loginCustomer *login = nullptr;
     int pilihan = 0;
     unordered_map<string, string> accounts;
     unordered_map<string, string> accountRoles;
@@ -66,12 +67,14 @@ int main()
     importFromFile(headTransaksi);
     importFromFile(head);
 
+
     directoryChecker("db");
     fileChecker("accounts.tsv", "db");
     fileChecker("accounts_role.tsv", "db");
     fileChecker("items.tsv", "db");
     fileChecker("transactions.tsv", "db");
     fileChecker("checkout.tsv", "db");
+    fileChecker("login.tsv", "db");
 
     
 

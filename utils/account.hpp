@@ -7,6 +7,7 @@
 #include "admin.hpp"
 #include "customer.hpp"
 #include "items.hpp"
+#include "logIn.hpp"
 using namespace std;
 
 void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi);
@@ -163,6 +164,11 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
     {
         if (accountsParam->at(username) == password)
         {
+            loginCustomer currentUser;
+            currentUser.username = username;
+            currentUser.password = password;
+            saveLogin(currentUser);
+            
             cout << "Login berhasil" << endl;
             endOfFunction(1);
             if (accountRolesParam->at(username) == "customer")
