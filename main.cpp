@@ -71,6 +71,7 @@ int main()
     fileChecker("accounts_role.tsv", "db");
     fileChecker("items.tsv", "db");
     fileChecker("transactions.tsv", "db");
+    fileChecker("checkout.tsv", "db");
 
     
 

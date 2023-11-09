@@ -10,37 +10,60 @@
 using namespace std;
 void menuCustomer(NodeTransaksi *headParam, Node *headx);
 void saveToFile(NodeTransaksi *headParam);
+void deleteAllShoppingCart(Node *&head);
+void displayData(NodeTransaksi *head);
 
 void addFirst(NodeTransaksi *headParam, Node *itemsList) {
-    string username;
+    string username, input;
     int itemNumber, amount;
-    cout << "Username: ";
+    int itemCounter = 0;
+    Node *currentItem = itemsList;
+    int selectedItem = 1;
+    Node *selectedItemNode = itemsList;
+
+    cout << "Username anda: ";
     getline(cin, username);
     if(username == "") {
         cout << "Username tidak boleh kosong" << endl;
+        system("pause");
         return;
     }
 
     cout << "Pilih nomor barang yang ingin dibeli: ";
-
-    int itemCounter = 0;
-    Node *currentItem = itemsList;
-    while (currentItem != nullptr) {
-        itemCounter++;
-        currentItem = currentItem->next;
+    getline(cin, input);
+    try {
+        itemNumber = stoi(input);
+        while (currentItem != nullptr) {
+            itemCounter++;
+            currentItem = currentItem->next;
+        }
+    } catch (const invalid_argument& e) {
+        cout << "Nomor barang tidak valid." << endl;
+        system("pause");
+        return;
     }
-
-    cin >> itemNumber;
-    cout << "Jumlah: ";
-    cin >> amount;
-
     if (itemNumber < 1 || itemNumber > itemCounter) {
         cout << "Nomor barang tidak valid." << endl;
+        system("pause");
         return;
     }
 
-    int selectedItem = 1;
-    Node *selectedItemNode = itemsList;
+    cout << "Jumlah: ";
+    getline(cin, input);
+    try {
+        amount = stoi(input);
+    } catch (const invalid_argument& e) {
+        cout << "Jumlah tidak valid." << endl;
+        system("pause");
+        return;
+    }
+
+    if (amount < 1) {
+        cout << "Jumlah tidak valid." << endl;
+        system("pause");
+        return;
+    }
+
     while (selectedItem < itemNumber && selectedItemNode != nullptr) {
         selectedItemNode = selectedItemNode->next;
         selectedItem++;
@@ -48,6 +71,7 @@ void addFirst(NodeTransaksi *headParam, Node *itemsList) {
 
     if (selectedItemNode == nullptr) {
         cout << "Nomor barang tidak valid." << endl;
+        system("pause");
         return;
     }
 
@@ -55,6 +79,7 @@ void addFirst(NodeTransaksi *headParam, Node *itemsList) {
     newNodeTransaksi->barang.username = username;
     newNodeTransaksi->barang.item_names = selectedItemNode->barang.namaBarang;
     newNodeTransaksi->barang.amount = amount;
+    newNodeTransaksi->barang.status = "Belum dibayar";
     newNodeTransaksi->next = nullptr;
 
 
@@ -62,16 +87,12 @@ void addFirst(NodeTransaksi *headParam, Node *itemsList) {
     {
         newNodeTransaksi->next = nullptr;
         headParam = newNodeTransaksi;
-
-        system("cls");
         cout << "Barang berhasil ditambahkan" << endl;
     }
     else
     {
         newNodeTransaksi->next = headParam;
         headParam = newNodeTransaksi;
-
-        system("cls");
         cout << "Barang berhasil ditambahkan" << endl;
     }
     saveToFile(headParam);
@@ -81,13 +102,15 @@ void addFirst(NodeTransaksi *headParam, Node *itemsList) {
 
 
 // DeleteFirst
-void deleteFirst(NodeTransaksi **headParam, int idx) {
-    if(*headParam  == NULL){
+void deleteFirst(NodeTransaksi **headParam, Node *itemsList, int idx) {
+    if (*headParam == NULL) {
         cout << "Anda belum memesan Barang" << endl;
         cout << "Barang kosong......" << endl;
         system("pause");
-        menuCustomer(*headParam, NULL);
+        menuCustomer(*headParam, itemsList);
+        return;
     }
+
     int count = 0;
     NodeTransaksi *temp = *headParam;
     while (temp != NULL) {
@@ -98,23 +121,33 @@ void deleteFirst(NodeTransaksi **headParam, int idx) {
     if (idx < 1 || idx > count) {
         cout << "Input diluar rentang yang valid" << endl;
         system("pause");
-        menuCustomer(*headParam, NULL);
+        menuCustomer(*headParam, itemsList);
         return;
     }
-    temp = *headParam;
-    for (int i = 1; i < idx - 1; i++) {
-        temp = temp->next;
+
+    if (idx == 1) {
+        NodeTransaksi *deletedNode = *headParam;
+        *headParam = (*headParam)->next;
+        delete deletedNode;
+        deletedNode = NULL;
+    } else {
+        temp = *headParam;
+        for (int i = 1; i < idx - 1; i++) {
+            temp = temp->next;
+        }
+        NodeTransaksi *deletedNode = temp->next;
+        temp->next = deletedNode->next;
+        delete deletedNode;
+        deletedNode = NULL;
     }
-    NodeTransaksi *deletedNode = temp->next;
-    temp->next = deletedNode->next;
-    delete deletedNode;
-    deletedNode = NULL;
+
     saveToFile(*headParam);
 
     cout << "\n---Barang Berhasil Dihapus---" << endl;
     system("pause");
-    menuCustomer(*headParam, NULL);
+    menuCustomer(*headParam, itemsList);
 }
+
 
 void saveToFile(NodeTransaksi *head){
     ofstream fileStream("db/transactions.tsv");
@@ -176,6 +209,73 @@ void importFromFile(NodeTransaksi *&head)
     fileStream.close();
 }
 
+void saveToCheckout(NodeTransaksi *headParam) {
+    ofstream fileStream("db/checkout.tsv", ios::app | ios::out);
+
+    if (!fileStream) {
+        cout << "Error opening file for writing." << endl;
+        return;
+    }
+
+    NodeTransaksi *current = headParam;
+    while (current != nullptr) {
+        fileStream
+            << current->barang.username << '\t'
+            << current->barang.item_names << '\t'
+            << current->barang.amount << '\n';
+        current = current->next;
+    }
+    fileStream.close();
+}
+
+void deleteAll(NodeTransaksi **headParam, Node *itemsList) {
+    NodeTransaksi *current = *headParam;
+    NodeTransaksi *next = nullptr;
+
+    while (current != nullptr) {
+        next = current->next;
+        delete current;
+        current = next;
+    }
+
+    *headParam = nullptr;
+    saveToFile(*headParam);
+    menuCustomer(*headParam, itemsList);
+}
+
+void checkOut(NodeTransaksi *&headParam, Node *&headx) {
+    if (headParam == nullptr) {
+        cout << "Tidak ada barang" << endl;
+        cout << "Silahkan tambah barang terlebih dahulu" << endl;
+        system("pause");
+        menuCustomer(headParam, headx);
+    }
+
+    cout << "Apakah anda yakin ingin checkout? (y/n) : ";
+    string pilihan;
+    cin >> pilihan;
+    fflush(stdin);
+
+    if (pilihan == "y") {
+        saveToCheckout(headParam);
+        deleteAll(&headParam, headx);
+
+        cout << "Terima kasih telah berbelanja di KerisBow" << endl;
+        cout << "Barang akan segera dikirimkan" << endl;
+        cout << "Silahkan cek email anda untuk melihat detail transaksi" << endl;
+        cout << "----------------------------------------------" << endl;
+        cout << "Tekan enter untuk kembali ke menu" << endl;
+        system("pause");
+        menuCustomer(headParam, headx);
+    } else if (pilihan == "n") {
+        system("pause");
+        menuCustomer(headParam, headx);
+    } else {
+        cout << "Pilihan tidak tersedia" << endl;
+        system("pause");
+        menuCustomer(headParam, headx);
+    }
+}
 
 // DisplayData
 void displayData(NodeTransaksi *head)
@@ -237,8 +337,7 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
         case 3:
             system("cls");
             displayData(headParam);
-            system("pause");
-            menuCustomer(headParam, headx);
+            checkOut(headParam, headx);
             break;
         case 4:
             system("cls");
@@ -246,7 +345,7 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
             try{
                 cout << "\nMasukkan pilihan : "; getline(cin, temp);
                 idx = stoi(temp);
-                deleteFirst(&headParam, idx);
+                deleteFirst(&headParam, headx, idx);
             }catch(invalid_argument &e){
                 cout<<"Inputan harus Integer";getch();cout<<endl;
                 menuCustomer(headParam, headx);

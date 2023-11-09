@@ -45,6 +45,11 @@ void fileChecker(string file, string directory)
             fileStream << "username\trole" << endl;
             fileStream.close();
         }
+        else if (file == "checkout.tsv")
+        {
+            ofstream fileStream(directory + "/" + file);
+            fileStream.close();
+        }
     }
 }
 
