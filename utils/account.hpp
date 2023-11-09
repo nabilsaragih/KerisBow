@@ -9,6 +9,7 @@
 #include "items.hpp"
 #include "logIn.hpp"
 #include "menu.hpp"
+#include "anonymousRead.hpp"
 using namespace std;
 
 void menuLoginRegister(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi);
