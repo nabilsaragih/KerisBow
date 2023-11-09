@@ -6,28 +6,20 @@
 #include "additional.hpp"
 #include "items.hpp"
 #include "admin.hpp"
+#include "logIn.hpp"
 
 using namespace std;
 void menuCustomer(NodeTransaksi *headParam, Node *headx);
 void saveToFile(NodeTransaksi *headParam);
-void deleteAllShoppingCart(Node *&head);
-void displayData(NodeTransaksi *head);
+void displayData(NodeTransaksi *head, loginCustomer userData);
 
-void addFirst(NodeTransaksi *headParam, Node *itemsList) {
+void addFirst(NodeTransaksi *headParam, Node *itemsList, loginCustomer userData) {
     string username, input;
     int itemNumber, amount;
     int itemCounter = 0;
     Node *currentItem = itemsList;
     int selectedItem = 1;
     Node *selectedItemNode = itemsList;
-
-    cout << "Username anda: ";
-    getline(cin, username);
-    if(username == "") {
-        cout << "Username tidak boleh kosong" << endl;
-        system("pause");
-        return;
-    }
 
     cout << "Pilih nomor barang yang ingin dibeli: ";
     getline(cin, input);
@@ -76,12 +68,11 @@ void addFirst(NodeTransaksi *headParam, Node *itemsList) {
     }
 
     NodeTransaksi *newNodeTransaksi = new NodeTransaksi;
-    newNodeTransaksi->barang.username = username;
+    newNodeTransaksi->barang.username = userData.username;
     newNodeTransaksi->barang.item_names = selectedItemNode->barang.namaBarang;
     newNodeTransaksi->barang.amount = amount;
     newNodeTransaksi->barang.status = "Belum dibayar";
     newNodeTransaksi->next = nullptr;
-
 
     if (headParam == nullptr)
     {
@@ -229,6 +220,7 @@ void saveToCheckout(NodeTransaksi *headParam) {
 }
 
 void deleteAll(NodeTransaksi **headParam, Node *itemsList) {
+    loginCustomer userData;
     NodeTransaksi *current = *headParam;
     NodeTransaksi *next = nullptr;
 
@@ -277,8 +269,44 @@ void checkOut(NodeTransaksi *&headParam, Node *&headx) {
     }
 }
 
-// DisplayData
-void displayData(NodeTransaksi *head)
+void boyerMooreSearch(Node *head, string keyword)
+{
+    Node *current = head;
+    int counter = 1;
+    while (current != nullptr)
+    {
+        int m = current->barang.namaBarang.length();
+        int n = keyword.length();
+        int badchar[256];
+        badCharHeuristic(keyword, n, badchar);
+        int s = 0;
+        while (s <= (m - n))
+        {
+            int j = n - 1;
+            while (j >= 0 && keyword[j] == current->barang.namaBarang[s + j])
+                j--;
+            if (j < 0)
+            {
+                cout << "----------------------------------------------" << endl;
+                cout << "Barang ke-" << counter << endl;
+                cout << "----------------------------------------------" << endl;
+                cout << "Nama Barang          : " << current->barang.namaBarang << endl;
+                cout << "Harga Barang         : " << current->barang.hargaBarang << endl;
+                cout << "Fitur Barang         : " << current->barang.fiturBarang << endl;
+                cout << "Deskripsi Barang     : " << current->barang.deskripsiBarang << endl;
+                cout << "----------------------------------------------" << endl;
+                break;
+            }
+            else
+                s += max(1, j - badchar[current->barang.namaBarang[s + j]]);
+        }
+        current = current->next;
+        counter++;
+    }
+}
+
+//void displayData by username has login
+void displayData(NodeTransaksi *head, loginCustomer userData)
 {
     if (head == nullptr)
     {
@@ -286,25 +314,36 @@ void displayData(NodeTransaksi *head)
         cout << "Silahkan tambah barang terlebih dahulu" << endl;
         return;
     }
+
     int counter = 1;
     NodeTransaksi *current = head;
     while (current != nullptr)
     {
-        cout << "----------------------------------------------" << endl;
-        cout << "Barang ke-" << counter << endl;
-        cout << "----------------------------------------------" << endl;
-        cout << "Nama Pembeli          : " << current->barang.username << endl;
-        cout << "Nama Barang yg dibeli : " << current->barang.item_names << endl;
-        cout << "Jumlah Beli           : " << current->barang.amount << endl;
-        cout << "----------------------------------------------" << endl;
+        if (current->barang.username == userData.username)
+        {
+            cout << "----------------------------------------------" << endl;
+            cout << "Barang ke-" << counter << endl;
+            cout << "----------------------------------------------" << endl;
+            cout << "Nama Pembeli          : " << current->barang.username << endl;
+            cout << "Nama Barang yg dibeli : " << current->barang.item_names << endl;
+            cout << "Jumlah Beli           : " << current->barang.amount << endl;
+            cout << "----------------------------------------------" << endl;
+            counter++;
+        }
         current = current->next;
-        counter++;
+    }
+
+    if (counter == 1)
+    {
+        cout << "Tidak ada transaksi untuk pengguna dengan username: " << userData.username << endl;
     }
 }
 
 void menuCustomer(NodeTransaksi *headParam, Node *headx)
 {
     string pilihanTemp, temp; int pilih,idx;
+    loginCustomer userData;
+    readLogin(userData);
 
     system("cls");
     cout << "Selamat datang di menu customer" << endl;
@@ -312,6 +351,7 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
     cout << "2. Keranjang" << endl;
     cout << "3. Checkout" << endl;
     cout << "4. Hapus Barang di Keranjang" << endl;
+    cout << "5. Cari Barang" << endl;
     cout << "0. Keluar" << endl;
     cout << "Masukkan pilihan anda: ";
     cin >> pilihanTemp;
@@ -325,23 +365,23 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
         case 1:
             system("cls");
             displayLinkedList(headx);
-            addFirst(headParam, headx);
+            addFirst(headParam, headx, userData);
             menuCustomer(headParam, headx);
             break;
         case 2:
             system("cls");
-            displayData(headParam);
+            displayData(headParam, userData);
             system("pause");
             menuCustomer(headParam, headx);
             break;
         case 3:
             system("cls");
-            displayData(headParam);
+            displayData(headParam, userData);
             checkOut(headParam, headx);
             break;
         case 4:
             system("cls");
-            displayData(headParam);
+            displayData(headParam, userData);
             try{
                 cout << "\nMasukkan pilihan : "; getline(cin, temp);
                 idx = stoi(temp);
@@ -350,6 +390,14 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
                 cout<<"Inputan harus Integer";getch();cout<<endl;
                 menuCustomer(headParam, headx);
             }
+            break;
+        case 5:
+            system("cls");
+            cout << "Masukkan keyword: ";
+            getline(cin, temp);
+            boyerMooreSearch(headx, temp);
+            system("pause");
+            menuCustomer(headParam, headx);
             break;
         case 0:
             cout << "Terima kasih telah menggunakan KerisBow" << endl;

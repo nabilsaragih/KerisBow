@@ -50,6 +50,11 @@ void fileChecker(string file, string directory)
             ofstream fileStream(directory + "/" + file);
             fileStream.close();
         }
+        else if (file == "login.tsv")
+        {
+            ofstream fileStream(directory + "/" + file);
+            fileStream.close();
+        }
     }
 }
 
