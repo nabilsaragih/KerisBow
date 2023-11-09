@@ -6,35 +6,43 @@
 #include "utils/customer.hpp"
 #include "utils/items.hpp"
 #include "utils/anonymousRead.hpp"
+#include "utils/menu.hpp"
 using namespace std;
+
+enum Pilihan {
+    LOGIN = 1,
+    LIHAT_BARANG = 2,
+    KELUAR = 0
+};
 
 void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
 {
     string pilihanTemp;
 
     system("cls");
-    cout << "Selamat datang di KerisBow" << endl;
-    cout << "1. Login" << endl;
-    cout << "2. Lihat Barang" << endl;
-    cout << "3. Keluar" << endl;
-    cout << "Masukkan pilihan anda: ";
-    cin >> pilihanTemp;
+
+    frameAwal();
+    gotoXY(72,11);std::cout << "Selamat datang di KerisBow" << std::endl;
+	gotoXY(54,18);std::cout << "1. Login" << std::endl;
+	gotoXY(78,18);std::cout << "2. Lihat Barang" << std::endl;
+	gotoXY(108,18);std::cout << "0. Keluar" << std::endl;
+    pilihanTemp = getch();
 
     try
     {
         *pilih = stoi(pilihanTemp);
         switch (*pilih)
         {
-        case 1:
+        case LOGIN:
             menuLogin(pilih, accountParam, accountRolesParam, headParam, headTransaksi);
             break;
 
-        case 2:
+        case LIHAT_BARANG:
             display(headParam);
             system("pause");
             break;
 
-        case 3:
+        case KELUAR:
             cout << "Terima kasih telah menggunakan KerisBow" << endl;
             endOfFunction(1);
             exit(0);
@@ -75,8 +83,6 @@ int main()
     fileChecker("transactions.tsv", "db");
     fileChecker("checkout.tsv", "db");
     fileChecker("login.tsv", "db");
-
-    
 
     while (true)
     {
