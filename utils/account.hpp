@@ -8,9 +8,62 @@
 #include "customer.hpp"
 #include "items.hpp"
 #include "logIn.hpp"
+#include "menu.hpp"
 using namespace std;
 
-void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi);
+void menuLoginRegister(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi);
+
+enum Pilihan {
+    LOGIN = 1,
+    LIHAT_BARANG = 2,
+    KELUAR = 0
+};
+
+void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
+{
+    string pilihanTemp;
+
+    system("cls");
+
+    frameAwal();
+    gotoXY(72,11);std::cout << "Selamat datang di KerisBow" << std::endl;
+	gotoXY(54,18);std::cout << "1. Login" << std::endl;
+	gotoXY(78,18);std::cout << "2. Lihat Barang" << std::endl;
+	gotoXY(108,18);std::cout << "0. Keluar" << std::endl;
+    pilihanTemp = getch();
+
+    try
+    {
+        *pilih = stoi(pilihanTemp);
+        switch (*pilih)
+        {
+        case LOGIN:
+            menuLoginRegister(pilih, accountParam, accountRolesParam, headParam, headTransaksi);
+            break;
+
+        case LIHAT_BARANG:
+            display(headParam);
+            system("pause");
+            break;
+
+        case KELUAR:
+            cout << "Terima kasih telah menggunakan KerisBow" << endl;
+            endOfFunction(1);
+            exit(0);
+            break;
+
+        default:
+            cout << "Pilihan tidak tersedia" << endl;
+            endOfFunction(1);
+            break;
+        }
+    }
+    catch (invalid_argument &e)
+    {
+        cout << "Mohon isi dengan pilihan yang ada!" << endl;
+        endOfFunction(1);
+    }
+}
 
 void addToFile(unordered_map<string, string> *accountsParam)
 {
@@ -137,7 +190,7 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, u
         default:
             cout << "Pilihan tidak tersedia" << endl;
             endOfFunction(1);
-            menuLogin(pilih, accountsParam, accountsRolesParam, headParam, headTransaksi);
+            menuLoginRegister(pilih, accountsParam, accountsRolesParam, headParam, headTransaksi);
             break;
         }
     }
@@ -188,29 +241,43 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
     endOfFunction(1);
 }
 
-void menuLogin(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
+void menuLoginRegister(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
 {
     string pilihanTemp;
 
+    enum menu_login {
+        LOGIN = 1,
+        REGISTER = 2,
+        KEMBALI = 0
+    };
+
     system("cls");
-    cout << "1. Login" << endl;
-    cout << "2. Register" << endl;
-    cout << "Masukkan pilihan anda: ";
-    cin >> pilihanTemp;
+
+    frameAwal();
+    gotoXY(80,11);std::cout << "MENU LOGIN" << std::endl;
+	gotoXY(54,18);std::cout << "1. LOGIN" << std::endl;
+	gotoXY(78,18);std::cout << "2. REGISTER" << std::endl;
+	gotoXY(108,18);std::cout << "0. KEMBALI" << std::endl;
+    pilihanTemp = getch();
 
     try
     {
         *pilih = stoi(pilihanTemp);
         switch (*pilih)
         {
-        case 1:
+        case LOGIN:
             system("cls");
             login(accountsParam, accountRolesParam, pilih, headParam, headTransaksi);
             break;
 
-        case 2:
+        case REGISTER:
             system("cls");
             registerAccount(accountsParam, pilih, accountRolesParam, headParam, headTransaksi);
+            break;
+
+        case KEMBALI:
+            system("cls");
+            menu(pilih, accountsParam, accountRolesParam, headParam, headTransaksi);
             break;
 
         default:
