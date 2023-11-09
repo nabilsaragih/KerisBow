@@ -4,6 +4,7 @@
 #include <bits/stdc++.h>
 #include "items.hpp"
 #include "additional.hpp"
+#include "searching.hpp"
 using namespace std;
 
 // add first ke LL
@@ -234,7 +235,7 @@ void displayLinkedList(Node *head)
 
 void menuAdmin(int *pilih, Node *headParam)
 {
-    string pilihanTemp;
+    string pilihanTemp, target;
 
     system("cls");
     cout << "Selamat datang di menu admin" << endl;
@@ -242,7 +243,7 @@ void menuAdmin(int *pilih, Node *headParam)
     cout << "2. Lihat Barang" << endl;
     cout << "3. Ubah Barang" << endl;
     cout << "4. Hapus Barang" << endl;
-    cout << "5. Tambah Admin (Prototype)" << endl;
+    // cout << "5. Tambah Admin (Prototype)" << endl;
     cout << "0. Keluar" << endl;
     cout << "Masukkan pilihan anda: ";
     cin >> pilihanTemp;
@@ -279,17 +280,19 @@ void menuAdmin(int *pilih, Node *headParam)
             system("pause");
             menuAdmin(pilih, headParam);
             break;
-        case 5:
-            system("cls");
-            cout << "Tambah Admin" << endl;
-            endOfFunction(1);
-            break;
         case 0:
             cout << "Terima kasih telah menggunakan KerisBow" << endl;
             clearFile("db/items.tsv");
             exportToFile(headParam);
             endOfFunction(1);
             exit(0);
+            break;
+        case 98:
+            system("cls");
+            cout<< "Masukkan nama barang yang ingin dicari : ";
+            getline(cin, target);
+            searchBM(headParam, target);
+            system("pause");
             break;
         case 99:
             system("cls");
