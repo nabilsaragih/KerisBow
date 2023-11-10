@@ -29,6 +29,7 @@ void searchBM(Node *head, string target)
     {
         int n = temp->barang.namaBarang.size();
         int badChar[NO_OF_CHARS];
+        int counter = 1;
         badCharHeuristic(target, m, badChar);
         int s = 0;
         while (s <= (n - m))
@@ -41,11 +42,14 @@ void searchBM(Node *head, string target)
             }
             if (j < 0)
             {
-                cout << "Nama  : " << temp->barang.namaBarang << endl;
-                cout << "Harga : " << temp->barang.hargaBarang << endl;
-                cout << "Fitur : " << temp->barang.fiturBarang << endl;
-                cout << "Deskripsi : " << temp->barang.deskripsiBarang << endl;
-
+                cout << "----------------------------------------------" << endl;
+                cout << "Barang ke-" << counter << endl;
+                cout << "----------------------------------------------" << endl;
+                cout << "Nama Barang          : " << temp->barang.namaBarang << endl;
+                cout << "Harga Barang         : " << temp->barang.hargaBarang << endl;
+                cout << "Fitur Barang         : " << temp->barang.fiturBarang << endl;
+                cout << "Deskripsi Barang     : " << temp->barang.deskripsiBarang << endl;
+                cout << "----------------------------------------------" << endl;
                 break;
             }
             else
@@ -55,6 +59,7 @@ void searchBM(Node *head, string target)
             }
         }
         temp = temp->next;
+        counter++;
     }
 }
 //// BM Search End
