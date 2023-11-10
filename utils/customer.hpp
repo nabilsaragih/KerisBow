@@ -148,7 +148,8 @@ void saveToFile(NodeTransaksi *head){
         fileStream 
         << current->barang.username << '\t' 
         << current->barang.item_names << '\t' 
-        << current->barang.amount << '\n';
+        << current->barang.amount << '\t'
+        << current->barang.status << '\n';
         current = current->next;
     }
     fileStream.close();
@@ -168,10 +169,11 @@ void importFromFile(NodeTransaksi *&head)
     while (getline(fileStream, line))
     {
         stringstream ss(line);
-        string username, item_names, amount;
+        string username, item_names, amount, status;
         if (getline(ss, username, '\t') &&
             getline(ss, item_names, '\t') &&
-            getline(ss, amount, '\t'))
+            getline(ss, amount, '\t') &&
+            getline(ss, status, '\n'))
         {
             NodeTransaksi *newNodeTransaksi = new NodeTransaksi;
             newNodeTransaksi->barang.username = username;
@@ -189,6 +191,8 @@ void importFromFile(NodeTransaksi *&head)
                 continue; // Lanjutkan ke iterasi berikutnya jika ada kesalahan
             }
 
+            newNodeTransaksi->barang.status = status;
+
             newNodeTransaksi->next = head;
             head = newNodeTransaksi;
         }
@@ -201,7 +205,7 @@ void importFromFile(NodeTransaksi *&head)
 }
 
 void saveToCheckout(NodeTransaksi *headParam, loginCustomer userData) {
-    ofstream fileStream("db/checkout.tsv", ios::app | ios::out);
+    ofstream fileStream("db/checkout.tsv", ios::app);
 
     if (!fileStream) {
         cout << "Error opening file for writing." << endl;
@@ -214,7 +218,11 @@ void saveToCheckout(NodeTransaksi *headParam, loginCustomer userData) {
             fileStream
                 << current->barang.username << '\t'
                 << current->barang.item_names << '\t'
-                << current->barang.amount << '\n';
+                << current->barang.amount << '\t';
+                if (current->barang.status == "Belum dibayar") {
+                    fileStream << "Dibayar" << '\n';
+                }
+                // << current->barang.status << '\n';
         }
         current = current->next;
     }
@@ -233,14 +241,14 @@ void deleteAll(NodeTransaksi **headParam, Node *itemsList, loginCustomer userDat
                 prev->next = current->next;
             }
 
-            delete current;
-            current = prev;
+            NodeTransaksi *temp = current;
+            current = current->next;
+            delete temp;
+            continue;
         }
 
         prev = current;
-        if (current != nullptr) {
-            current = current->next;
-        }
+        current = current->next;
     }
 
     saveToFile(*headParam);
@@ -280,43 +288,6 @@ void checkOut(NodeTransaksi *&headParam, Node *&headx, loginCustomer userData) {
         menuCustomer(headParam, headx);
     }
 }
-
-void boyerMooreSearch(Node *head, string keyword)
-{
-    Node *current = head;
-    int counter = 1;
-    while (current != nullptr)
-    {
-        int m = current->barang.namaBarang.length();
-        int n = keyword.length();
-        int badchar[256];
-        badCharHeuristic(keyword, n, badchar);
-        int s = 0;
-        while (s <= (m - n))
-        {
-            int j = n - 1;
-            while (j >= 0 && keyword[j] == current->barang.namaBarang[s + j])
-                j--;
-            if (j < 0)
-            {
-                cout << "----------------------------------------------" << endl;
-                cout << "Barang ke-" << counter << endl;
-                cout << "----------------------------------------------" << endl;
-                cout << "Nama Barang          : " << current->barang.namaBarang << endl;
-                cout << "Harga Barang         : " << current->barang.hargaBarang << endl;
-                cout << "Fitur Barang         : " << current->barang.fiturBarang << endl;
-                cout << "Deskripsi Barang     : " << current->barang.deskripsiBarang << endl;
-                cout << "----------------------------------------------" << endl;
-                break;
-            }
-            else
-                s += max(1, j - badchar[current->barang.namaBarang[s + j]]);
-        }
-        current = current->next;
-        counter++;
-    }
-}
-
 //void displayData by username has login
 void displayData(NodeTransaksi *head, loginCustomer userData)
 {
@@ -407,7 +378,7 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
             system("cls");
             cout << "Masukkan keyword: ";
             getline(cin, temp);
-            boyerMooreSearch(headx, temp);
+            searchBM(headx, temp);
             system("pause");
             menuCustomer(headParam, headx);
             break;
