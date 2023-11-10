@@ -134,6 +134,45 @@ void updateSpecific(Node *&headParam)
     cout << "Barang tidak ditemukan." << endl;
 }
 
+// sorting
+int length(Node *head)
+{
+    int panjang = 0;
+    Node *temp = head;
+    while (temp != nullptr)
+    {
+        temp = temp->next;
+        panjang++;
+    }
+    return panjang;
+}
+
+Node *findNode(Node *head, int idx)
+{
+    for (int a = 0; a < idx; a++)
+    {
+        head = head->next;
+    }
+    return head;
+}
+
+void shellSort(Node *head, int n)
+{
+    for (int gap = n / 2; gap > 0; gap /= 2)
+    {
+        for (int i = gap; i < n; i++)
+        {
+            Barang tempBarang = findNode(head, i)->barang;
+            int j;
+            for (j = i; j >= gap && findNode(head, j - gap)->barang.namaBarang > tempBarang.namaBarang ; j -= gap)
+            {
+                findNode(head, j)->barang = findNode(head, j - gap)->barang;
+            }
+            findNode(head, j)->barang = tempBarang;
+        }
+    }
+}
+
 // export data yang ada di LL ke TSV buat long-term storage
 void exportToFile(Node *head)
 {
@@ -243,7 +282,6 @@ void menuAdmin(int *pilih, Node *headParam)
     cout << "2. Lihat Barang" << endl;
     cout << "3. Ubah Barang" << endl;
     cout << "4. Hapus Barang" << endl;
-    // cout << "5. Tambah Admin (Prototype)" << endl;
     cout << "0. Keluar" << endl;
     cout << "Masukkan pilihan anda: ";
     cin >> pilihanTemp;
@@ -262,12 +300,14 @@ void menuAdmin(int *pilih, Node *headParam)
             break;
         case 2:
             system("cls");
+            shellSort(headParam, length(headParam));
             displayLinkedList(headParam);
             system("pause");
             menuAdmin(pilih, headParam);
             break;
         case 3:
             system("cls");
+            shellSort(headParam, length(headParam));
             displayLinkedList(headParam);
             updateSpecific(headParam);
             system("pause");
@@ -275,6 +315,7 @@ void menuAdmin(int *pilih, Node *headParam)
             break;
         case 4:
             system("cls");
+            shellSort(headParam, length(headParam));
             displayLinkedList(headParam);
             deleteSpecific(headParam);
             system("pause");
@@ -287,9 +328,15 @@ void menuAdmin(int *pilih, Node *headParam)
             endOfFunction(1);
             exit(0);
             break;
+        case 97:
+            system("cls");
+            shellSort(headParam, length(headParam));
+            system("pause");
+            menuAdmin(pilih, headParam);
+            break;
         case 98:
             system("cls");
-            cout<< "Masukkan nama barang yang ingin dicari : ";
+            cout << "Masukkan nama barang yang ingin dicari : ";
             getline(cin, target);
             searchBM(headParam, target);
             system("pause");
