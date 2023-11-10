@@ -14,6 +14,7 @@ void saveToFile(NodeTransaksi *headParam);
 void displayData(NodeTransaksi *head, loginCustomer userData);
 
 void addFirst(NodeTransaksi *headParam, Node *itemsList, loginCustomer userData) {
+    // Inisialisasi variabel yang dibutuhkan
     string username, input;
     int itemNumber, amount;
     int itemCounter = 0;
@@ -21,8 +22,11 @@ void addFirst(NodeTransaksi *headParam, Node *itemsList, loginCustomer userData)
     int selectedItem = 1;
     Node *selectedItemNode = itemsList;
 
+    // Input nomor barang yang ingin dibeli
     cout << "Pilih nomor barang yang ingin dibeli: ";
     getline(cin, input);
+
+    // Validasi nomor barang
     try {
         itemNumber = stoi(input);
         while (currentItem != nullptr) {
@@ -34,12 +38,14 @@ void addFirst(NodeTransaksi *headParam, Node *itemsList, loginCustomer userData)
         system("pause");
         return;
     }
+    // Cek apakah nomor barang yang dimasukkan valid
     if (itemNumber < 1 || itemNumber > itemCounter) {
         cout << "Nomor barang tidak valid." << endl;
         system("pause");
         return;
     }
 
+    // Input jumlah barang
     cout << "Jumlah: ";
     getline(cin, input);
     try {
@@ -50,23 +56,27 @@ void addFirst(NodeTransaksi *headParam, Node *itemsList, loginCustomer userData)
         return;
     }
 
+    // Validasi jumlah barang
     if (amount < 1) {
         cout << "Jumlah tidak valid." << endl;
         system("pause");
         return;
     }
 
+    // Menemukan barang yang dipilih
     while (selectedItem < itemNumber && selectedItemNode != nullptr) {
         selectedItemNode = selectedItemNode->next;
         selectedItem++;
     }
 
+    // Validasi nomor barang yang dipilih
     if (selectedItemNode == nullptr) {
         cout << "Nomor barang tidak valid." << endl;
         system("pause");
         return;
     }
 
+    // Membuat node transaksi baru
     NodeTransaksi *newNodeTransaksi = new NodeTransaksi;
     newNodeTransaksi->barang.username = userData.username;
     newNodeTransaksi->barang.item_names = selectedItemNode->barang.namaBarang;
@@ -74,6 +84,7 @@ void addFirst(NodeTransaksi *headParam, Node *itemsList, loginCustomer userData)
     newNodeTransaksi->barang.status = "Belum dibayar";
     newNodeTransaksi->next = nullptr;
 
+    // Menambahkan node ke awal daftar transaksi
     if (headParam == nullptr)
     {
         newNodeTransaksi->next = nullptr;
@@ -86,6 +97,7 @@ void addFirst(NodeTransaksi *headParam, Node *itemsList, loginCustomer userData)
         headParam = newNodeTransaksi;
         cout << "Barang berhasil ditambahkan" << endl;
     }
+    // Menyimpan perubahan ke file dan melanjutkan ke menu customer
     saveToFile(headParam);
     system("pause");
     menuCustomer(headParam, itemsList);
@@ -94,6 +106,7 @@ void addFirst(NodeTransaksi *headParam, Node *itemsList, loginCustomer userData)
 
 // DeleteFirst
 void deleteFirst(NodeTransaksi **headParam, Node *itemsList, int idx) {
+    // Menangani kasus jika tidak ada transaksi
     if (*headParam == NULL) {
         cout << "Anda belum memesan Barang" << endl;
         cout << "Barang kosong......" << endl;
@@ -102,6 +115,7 @@ void deleteFirst(NodeTransaksi **headParam, Node *itemsList, int idx) {
         return;
     }
 
+    // Menghitung jumlah transaksi secara traversal
     int count = 0;
     NodeTransaksi *temp = *headParam;
     while (temp != NULL) {
@@ -109,6 +123,7 @@ void deleteFirst(NodeTransaksi **headParam, Node *itemsList, int idx) {
         temp = temp->next;
     }
 
+    // Validasi indeks input
     if (idx < 1 || idx > count) {
         cout << "Input diluar rentang yang valid" << endl;
         system("pause");
@@ -116,12 +131,14 @@ void deleteFirst(NodeTransaksi **headParam, Node *itemsList, int idx) {
         return;
     }
 
+    // Menghapus node transaksi pertama
     if (idx == 1) {
         NodeTransaksi *deletedNode = *headParam;
         *headParam = (*headParam)->next;
         delete deletedNode;
         deletedNode = NULL;
     } else {
+        // Menghapus node transaksi pada indeks tertentu
         temp = *headParam;
         for (int i = 1; i < idx - 1; i++) {
             temp = temp->next;
@@ -132,16 +149,18 @@ void deleteFirst(NodeTransaksi **headParam, Node *itemsList, int idx) {
         deletedNode = NULL;
     }
 
+    // Menyimpan perubahan ke file dan melanjutkan ke menu customer
     saveToFile(*headParam);
-
     cout << "\n---Barang Berhasil Dihapus---" << endl;
     system("pause");
     menuCustomer(*headParam, itemsList);
 }
 
-
+// Simpan data transaksi ke dalam sebuah file
 void saveToFile(NodeTransaksi *head){
     ofstream fileStream("db/transactions.tsv");
+
+    // Iterasi melalui linked list dan menulis data ke dalam file
     NodeTransaksi *current = head;
     while (current != nullptr)
     {
@@ -159,22 +178,28 @@ void saveToFile(NodeTransaksi *head){
 void importFromFile(NodeTransaksi *&head)
 {
     ifstream fileStream("db/Transactions.tsv");
+
+    // Periksa apakah file terbuka
     if (!fileStream.is_open())
     {
         cout << "File not found!" << endl;
         return;
     }
 
+    // Baca setiap baris dari file dan buat simpul baru dalam linked list
     string line;
     while (getline(fileStream, line))
     {
         stringstream ss(line);
         string username, item_names, amount, status;
+
+        // Parse setiap field dari baris yang dipisahkan oleh tab
         if (getline(ss, username, '\t') &&
             getline(ss, item_names, '\t') &&
             getline(ss, amount, '\t') &&
             getline(ss, status, '\n'))
         {
+            // Buat simpul transaksi baru
             NodeTransaksi *newNodeTransaksi = new NodeTransaksi;
             newNodeTransaksi->barang.username = username;
             newNodeTransaksi->barang.item_names = item_names;
@@ -193,6 +218,7 @@ void importFromFile(NodeTransaksi *&head)
 
             newNodeTransaksi->barang.status = status;
 
+            // Tambahkan simpul baru ke awal linked list
             newNodeTransaksi->next = head;
             head = newNodeTransaksi;
         }
@@ -204,6 +230,7 @@ void importFromFile(NodeTransaksi *&head)
     fileStream.close();
 }
 
+// Import data checkout dari file ke linked list
 void importFromCheckout(NodeCheckout *&head)
 {
     ifstream fileStream("db/checkout.tsv");
@@ -251,7 +278,7 @@ void importFromCheckout(NodeCheckout *&head)
     fileStream.close();
 }
 
-
+// Simpan data checkout ke dalam sebuah file
 void saveToCheckout(NodeTransaksi *headParam, loginCustomer userData) {
     ofstream fileStream("db/checkout.tsv", ios::app);
 
@@ -276,32 +303,38 @@ void saveToCheckout(NodeTransaksi *headParam, loginCustomer userData) {
     fileStream.close();
 }
 
+// Delete all transaksi yang dimiliki oleh pengguna yang sedang login
 void deleteAll(NodeTransaksi **headParam, Node *itemsList, loginCustomer userData) {
     NodeTransaksi *current = *headParam;
     NodeTransaksi *prev = nullptr;
 
+    // Iterasi melalui linked list transaksi
     while (current != nullptr) {
+        // Mengecek apakah transaksi terkait dengan pengguna
         if (current->barang.username == userData.username) {
+            // Menghapus transaksi dari linked list
             if (prev == nullptr) {
                 *headParam = current->next;
             } else {
                 prev->next = current->next;
             }
-
+            // Menghapus node transaksi dan melanjutkan ke iterasi berikutnya
             NodeTransaksi *temp = current;
             current = current->next;
             delete temp;
             continue;
         }
-
+        // Pindah ke node berikutnya dalam linked list
         prev = current;
         current = current->next;
     }
+    // Menyimpan perubahan ke dalam file
     saveToFile(*headParam);
 }
 
-//Minus ini harus ada pembayaran atau nda
+// Checkout semua transaksi yang dimiliki oleh pengguna yang sedang login
 void checkOut(NodeTransaksi *&headParam, Node *&headx, loginCustomer userData) {
+    // Mengecek apakah ada transaksi yang dipilih
     if (headParam == nullptr) {
         cout << "Tidak ada barang" << endl;
         cout << "Silahkan tambah barang terlebih dahulu" << endl;
@@ -310,14 +343,18 @@ void checkOut(NodeTransaksi *&headParam, Node *&headx, loginCustomer userData) {
         return;
     }
 
+    // Menanyakan konfirmasi untuk checkout
     cout << "Apakah anda yakin ingin checkout? (y/n) : ";
     string pilihan;
     cin >> pilihan;
     fflush(stdin);
 
     if (pilihan == "y") {
+        // Menyimpan transaksi yang akan di-checkout ke dalam file checkout
         saveToCheckout(headParam, userData);
+        // Menghapus semua transaksi yang terkait dengan pengguna dari linked list
         deleteAll(&headParam, headx, userData);
+        // Menampilkan pesan checkout berhasil
         system("cls");
         cout << "+---------------------------------------------+" << endl;
         cout << "|  Terima kasih telah berbelanja di KerisBow  |" << endl;
@@ -331,17 +368,20 @@ void checkOut(NodeTransaksi *&headParam, Node *&headx, loginCustomer userData) {
         system("pause");
         menuCustomer(headParam, headx);
     } else if (pilihan == "n") {
+        // Batal checkout dan kembali ke menu customer  
         system("pause");
         menuCustomer(headParam, headx);
     } else {
+        // Pesan untuk pilihan yang tidak valid
         cout << "Pilihan tidak tersedia" << endl;
         system("pause");
         menuCustomer(headParam, headx);
     }
 }
-//void displayData by username has login
+// Menampilkan data transaksi yang dimiliki oleh pengguna yang sedang login
 void displayData(NodeTransaksi *head, loginCustomer userData)
 {
+    // Mengecek apakah terdapat data transaksi
     if (head == nullptr)
     {
         cout << "Tidak ada barang" << endl;
@@ -351,11 +391,16 @@ void displayData(NodeTransaksi *head, loginCustomer userData)
 
     int counter = 1;
     NodeTransaksi *current = head;
+
+    // Menampilkan header tabel
     cout << "========================================================================================" << endl;
     cout << "| No.|  Nama Pembeli  |   Nama Barang yang dibeli     |     Jumlah     |     status    |" << endl;
     cout << "========================================================================================" << endl;
+
+    // Iterasi melalui linked list transaksi
     while (current != nullptr)
     {
+        // Menampilkan data transaksi jika terkait dengan pengguna
         if (current->barang.username == userData.username)
         {
             cout << "[ " << counter << ". ] " << 
@@ -369,6 +414,7 @@ void displayData(NodeTransaksi *head, loginCustomer userData)
         current = current->next;
     }
 
+    // Menampilkan pesan jika tidak ada transaksi untuk pengguna
     if (counter == 1)
     {
         cout << "Tidak ada transaksi untuk pengguna dengan username: " << userData.username << endl;
@@ -408,6 +454,7 @@ void displayCheckout(NodeCheckout *head, loginCustomer userData)
     }
 }
 
+// Menu customer
 void menuCustomer(NodeTransaksi *headParam, Node *headx)
 {
     string pilihanTemp, temp; int pilih,idx;
