@@ -204,6 +204,54 @@ void importFromFile(NodeTransaksi *&head)
     fileStream.close();
 }
 
+void importFromCheckout(NodeCheckout *&head)
+{
+    ifstream fileStream("db/checkout.tsv");
+    if (!fileStream.is_open())
+    {
+        cout << "File not found!" << endl;
+        return;
+    }
+
+    string line;
+    while (getline(fileStream, line))
+    {
+        stringstream ss(line);
+        string username, item_names, amount, status;
+        if (getline(ss, username, '\t') &&
+            getline(ss, item_names, '\t') &&
+            getline(ss, amount, '\t') &&
+            getline(ss, status, '\n'))
+        {
+            NodeCheckout *newNodeCheckout = new NodeCheckout;
+            newNodeCheckout->barang.username = username;
+            newNodeCheckout->barang.item_names = item_names;
+
+            try
+            {
+                newNodeCheckout->barang.amount = stoi(amount);
+            }
+            catch (const invalid_argument &e)
+            {
+                cout << "Invalid integer value in the file: " << e.what() << endl;
+                delete newNodeCheckout;
+                continue;
+            }
+
+            newNodeCheckout->barang.status = status;
+
+            newNodeCheckout->next = head;
+            head = newNodeCheckout;
+        }
+        else
+        {
+            cout << "Invalid line format in the file." << endl;
+        }
+    }
+    fileStream.close();
+}
+
+
 void saveToCheckout(NodeTransaksi *headParam, loginCustomer userData) {
     ofstream fileStream("db/checkout.tsv", ios::app);
 
@@ -220,9 +268,8 @@ void saveToCheckout(NodeTransaksi *headParam, loginCustomer userData) {
                 << current->barang.item_names << '\t'
                 << current->barang.amount << '\t';
                 if (current->barang.status == "Belum dibayar") {
-                    fileStream << "Dibayar" << '\n';
+                    fileStream << "Diproses" << '\n';
                 }
-                // << current->barang.status << '\n';
         }
         current = current->next;
     }
@@ -250,18 +297,17 @@ void deleteAll(NodeTransaksi **headParam, Node *itemsList, loginCustomer userDat
         prev = current;
         current = current->next;
     }
-
     saveToFile(*headParam);
-    menuCustomer(*headParam, itemsList);
 }
 
-
+//Minus ini harus ada pembayaran atau nda
 void checkOut(NodeTransaksi *&headParam, Node *&headx, loginCustomer userData) {
     if (headParam == nullptr) {
         cout << "Tidak ada barang" << endl;
         cout << "Silahkan tambah barang terlebih dahulu" << endl;
         system("pause");
         menuCustomer(headParam, headx);
+        return;
     }
 
     cout << "Apakah anda yakin ingin checkout? (y/n) : ";
@@ -272,11 +318,16 @@ void checkOut(NodeTransaksi *&headParam, Node *&headx, loginCustomer userData) {
     if (pilihan == "y") {
         saveToCheckout(headParam, userData);
         deleteAll(&headParam, headx, userData);
-
-        cout << "Terima kasih telah berbelanja di KerisBow" << endl;
-        cout << "Barang akan segera dikirimkan" << endl;
-        cout << "Silahkan cek email anda untuk melihat detail transaksi" << endl;
-        cout << "----------------------------------------------" << endl;
+        system("cls");
+        cout << "+---------------------------------------------+" << endl;
+        cout << "|  Terima kasih telah berbelanja di KerisBow  |" << endl;
+        cout << "+---------------------------------------------+" << endl;
+        cout << "|  Code Pembayaran : XXXX-XXXX-XXXX-XXXX      |" << endl;
+        cout << "+---------------------------------------------+" << endl;
+        cout << "|       Silahkan melakukan pembayaran di      |" << endl;
+        cout << "|      gerai terdekat dengan menunjukkan      |" << endl;
+        cout << "|           code pembayaran diatas            |" << endl;
+        cout << "+---------------------------------------------+" << endl;
         system("pause");
         menuCustomer(headParam, headx);
     } else if (pilihan == "n") {
@@ -300,17 +351,19 @@ void displayData(NodeTransaksi *head, loginCustomer userData)
 
     int counter = 1;
     NodeTransaksi *current = head;
+    cout << "========================================================================================" << endl;
+    cout << "| No.|  Nama Pembeli  |   Nama Barang yang dibeli     |     Jumlah     |     status    |" << endl;
+    cout << "========================================================================================" << endl;
     while (current != nullptr)
     {
         if (current->barang.username == userData.username)
         {
-            cout << "----------------------------------------------" << endl;
-            cout << "Barang ke-" << counter << endl;
-            cout << "----------------------------------------------" << endl;
-            cout << "Nama Pembeli          : " << current->barang.username << endl;
-            cout << "Nama Barang yg dibeli : " << current->barang.item_names << endl;
-            cout << "Jumlah Beli           : " << current->barang.amount << endl;
-            cout << "----------------------------------------------" << endl;
+            cout << "[ " << counter << ". ] " << 
+            setw(15) << left << current->barang.username << "| " <<
+            setw(28) << left << current->barang.item_names << "| " << 
+            setw(13) << left << current->barang.amount << "| " << 
+            setw(13) << left << current->barang.status << "| " << endl;
+            cout << "========================================================================================" << endl;
             counter++;
         }
         current = current->next;
@@ -322,21 +375,60 @@ void displayData(NodeTransaksi *head, loginCustomer userData)
     }
 }
 
+void displayCheckout(NodeCheckout *head, loginCustomer userData)
+{
+    if (head == nullptr)
+    {
+        cout << "Tidak ada data checkout" << endl;
+        return;
+    }
+
+    int counter = 1;
+    NodeCheckout *current = head;
+    cout << "+====================================================+" << endl;
+    cout << "| No.|   Nama Barang yang dibeli  |      Status      |" << endl;
+    cout << "+====================================================+" << endl;
+    while (current != nullptr)
+    {
+        if (current->barang.username == userData.username)
+        {
+            cout << "[ " << counter << ". ] "
+                 << setw(27) << left << current->barang.item_names << "|"
+                 << setw(13) << left << current->barang.status << "|" << endl;
+            cout << "========================================" << endl;
+            counter++;
+        }
+        current = current->next;
+    }
+    system("pause");
+
+    if (counter == 1)
+    {
+        cout << "Tidak ada data checkout untuk pengguna dengan username: " << userData.username << endl;
+    }
+}
+
 void menuCustomer(NodeTransaksi *headParam, Node *headx)
 {
     string pilihanTemp, temp; int pilih,idx;
     loginCustomer userData;
+    NodeCheckout *headCheckout;
     readLogin(userData);
+    importFromCheckout(headCheckout);
 
     system("cls");
-    cout << "Selamat datang di menu customer" << endl;
-    cout << "1. Tambah Barang" << endl;
-    cout << "2. Keranjang" << endl;
-    cout << "3. Checkout" << endl;
-    cout << "4. Hapus Barang di Keranjang" << endl;
-    cout << "5. Cari Barang" << endl;
-    cout << "0. Keluar" << endl;
-    cout << "Masukkan pilihan anda: ";
+    cout << "+=================================+" << endl;
+    cout << "| Selamat datang di menu customer |" << endl;
+    cout << "+=================================+" << endl;
+    cout << "| 1. Tambah Barang                |" << endl;
+    cout << "| 2. Keranjang                    |" << endl;
+    cout << "| 3. Barang yang sudah dibeli     |" << endl;
+    cout << "| 4. Checkout                     |" << endl;
+    cout << "| 5. Hapus Barang di Keranjang    |" << endl;
+    cout << "| 6. Cari Barang                  |" << endl;
+    cout << "| 0. Keluar                       |" << endl;
+    cout << "+=================================+" << endl;
+    cout << "+--- Masukkan pilihan anda => ";
     cin >> pilihanTemp;
     fflush(stdin);
 
@@ -359,10 +451,16 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
             break;
         case 3:
             system("cls");
+            displayCheckout(headCheckout, userData);
+            system("pause");
+            menuCustomer(headParam, headx);
+            break;
+        case 4:
+            system("cls");
             displayData(headParam, userData);
             checkOut(headParam, headx, userData);
             break;
-        case 4:
+        case 5:
             system("cls");
             displayData(headParam, userData);
             try{
@@ -374,7 +472,7 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
                 menuCustomer(headParam, headx);
             }
             break;
-        case 5:
+        case 6:
             system("cls");
             cout << "Masukkan keyword: ";
             getline(cin, temp);
