@@ -9,7 +9,7 @@
 #include "items.hpp"
 using namespace std;
 
-
+// struct loginCustomer untuk menyimpan username dan password
 struct loginCustomer
 {
     string username;
@@ -17,7 +17,6 @@ struct loginCustomer
 };
 
 //login save to temporary tsv
-
 void saveLogin(loginCustomer login)
 {
     ofstream fileStream("db/login.tsv", ios::trunc);
@@ -26,6 +25,7 @@ void saveLogin(loginCustomer login)
     fileStream.close();
 }
 
+// membaca data dari file login.tsv
 void readLogin(loginCustomer &login)
 {
     ifstream fileStream("db/login.tsv");
