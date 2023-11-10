@@ -12,14 +12,17 @@
 #include "anonymousRead.hpp"
 using namespace std;
 
+// Prototipe fungsi menuLoginRegister
 void menuLoginRegister(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi);
 
+// enum untuk pilihan menu
 enum Pilihan {
     LOGIN = 1,
     LIHAT_BARANG = 2,
     KELUAR = 0
 };
 
+// Fungsi untuk menampilkan menu utama
 void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
 {
     string pilihanTemp;
@@ -66,6 +69,7 @@ void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map
     }
 }
 
+// Fungsi untuk menambahkan data register ke file
 void addToFile(unordered_map<string, string> *accountsParam)
 {
     ofstream fileStream("db/accounts.tsv", ios::trunc);
@@ -77,6 +81,7 @@ void addToFile(unordered_map<string, string> *accountsParam)
     fileStream.close();
 }
 
+// Fungsi untuk membaca data register dari file
 void readFromFile(unordered_map<string, string> *accountsParam)
 {
     ifstream fileStream("db/accounts.tsv");
@@ -92,6 +97,7 @@ void readFromFile(unordered_map<string, string> *accountsParam)
     fileStream.close();
 }
 
+// Fungsi untuk menambahkan data role ke file
 void addRoles(string username, string role)
 {
     ofstream fileStream("db/accounts_role.tsv", ios::app);
@@ -99,6 +105,7 @@ void addRoles(string username, string role)
     fileStream.close();
 }
 
+// Fungsi untuk membaca data role dari file
 void readRoles(unordered_map<string, string> *accountsParam)
 {
     ifstream fileStream("db/accounts_role.tsv");
@@ -114,6 +121,7 @@ void readRoles(unordered_map<string, string> *accountsParam)
     fileStream.close();
 }
 
+// Fungsi untuk register akun sebagai customer
 void registerCustomer(unordered_map<string, string> *accountsParam)
 {
     string username, password;
@@ -139,6 +147,7 @@ void registerCustomer(unordered_map<string, string> *accountsParam)
     endOfFunction(1);
 }
 
+// Fungsi untuk register akun sebagai admin
 void registerAdmin(unordered_map<string, string> *accountsParam)
 {
     string username, password;
@@ -164,6 +173,7 @@ void registerAdmin(unordered_map<string, string> *accountsParam)
     endOfFunction(1);
 }
 
+// Fungsi untuk menu register
 void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, unordered_map<string, string> *accountsRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
 {
     string username, password, pilihanTemp;
@@ -202,6 +212,7 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, u
     }
 }
 
+// Fungsi untuk login
 void login(unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, int *pilih, Node *headParam, NodeTransaksi *headTransaksi)
 {
     string username, password;
@@ -242,6 +253,7 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
     endOfFunction(1);
 }
 
+// Fungsi untuk menampilkan menu login dan register
 void menuLoginRegister(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
 {
     string pilihanTemp;
