@@ -200,7 +200,7 @@ void importFromFile(NodeTransaksi *&head)
     fileStream.close();
 }
 
-void saveToCheckout(NodeTransaksi *headParam) {
+void saveToCheckout(NodeTransaksi *headParam, loginCustomer userData) {
     ofstream fileStream("db/checkout.tsv", ios::app | ios::out);
 
     if (!fileStream) {
@@ -210,32 +210,45 @@ void saveToCheckout(NodeTransaksi *headParam) {
 
     NodeTransaksi *current = headParam;
     while (current != nullptr) {
-        fileStream
-            << current->barang.username << '\t'
-            << current->barang.item_names << '\t'
-            << current->barang.amount << '\n';
+        if (current->barang.username == userData.username) {
+            fileStream
+                << current->barang.username << '\t'
+                << current->barang.item_names << '\t'
+                << current->barang.amount << '\n';
+        }
         current = current->next;
     }
     fileStream.close();
 }
 
-void deleteAll(NodeTransaksi **headParam, Node *itemsList) {
-    loginCustomer userData;
+void deleteAll(NodeTransaksi **headParam, Node *itemsList, loginCustomer userData) {
     NodeTransaksi *current = *headParam;
-    NodeTransaksi *next = nullptr;
+    NodeTransaksi *prev = nullptr;
 
     while (current != nullptr) {
-        next = current->next;
-        delete current;
-        current = next;
+        if (current->barang.username == userData.username) {
+            if (prev == nullptr) {
+                *headParam = current->next;
+            } else {
+                prev->next = current->next;
+            }
+
+            delete current;
+            current = prev;
+        }
+
+        prev = current;
+        if (current != nullptr) {
+            current = current->next;
+        }
     }
 
-    *headParam = nullptr;
     saveToFile(*headParam);
     menuCustomer(*headParam, itemsList);
 }
 
-void checkOut(NodeTransaksi *&headParam, Node *&headx) {
+
+void checkOut(NodeTransaksi *&headParam, Node *&headx, loginCustomer userData) {
     if (headParam == nullptr) {
         cout << "Tidak ada barang" << endl;
         cout << "Silahkan tambah barang terlebih dahulu" << endl;
@@ -249,14 +262,13 @@ void checkOut(NodeTransaksi *&headParam, Node *&headx) {
     fflush(stdin);
 
     if (pilihan == "y") {
-        saveToCheckout(headParam);
-        deleteAll(&headParam, headx);
+        saveToCheckout(headParam, userData);
+        deleteAll(&headParam, headx, userData);
 
         cout << "Terima kasih telah berbelanja di KerisBow" << endl;
         cout << "Barang akan segera dikirimkan" << endl;
         cout << "Silahkan cek email anda untuk melihat detail transaksi" << endl;
         cout << "----------------------------------------------" << endl;
-        cout << "Tekan enter untuk kembali ke menu" << endl;
         system("pause");
         menuCustomer(headParam, headx);
     } else if (pilihan == "n") {
@@ -377,7 +389,7 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
         case 3:
             system("cls");
             displayData(headParam, userData);
-            checkOut(headParam, headx);
+            checkOut(headParam, headx, userData);
             break;
         case 4:
             system("cls");
