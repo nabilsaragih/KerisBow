@@ -11,6 +11,7 @@ using namespace std;
 
 int main()
 {
+    // Inisialisasi
     Node *head = nullptr;
     NodeTransaksi *headTransaksi = nullptr;
     NodeCheckout *headCheckout = nullptr;
@@ -18,11 +19,13 @@ int main()
     unordered_map<string, string> accounts;
     unordered_map<string, string> accountRoles;
 
+    // Extract data dari file
     readFromFile(&accounts);
     readRoles(&accountRoles);
     importFromFile(headTransaksi);
     importFromFile(head);
 
+    // Mengecek apakah file dan folder sudah ada
     directoryChecker("db");
     fileChecker("accounts.tsv", "db");
     fileChecker("accounts_role.tsv", "db");
@@ -31,6 +34,7 @@ int main()
     fileChecker("checkout.tsv", "db");
     fileChecker("login.tsv", "db");
 
+    // Menjalankan program
     while (true)
     {
         menu(&pilihan, &accounts, &accountRoles, head, headTransaksi, headCheckout);

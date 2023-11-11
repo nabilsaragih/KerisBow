@@ -5,6 +5,7 @@
 #include "items.hpp"
 using namespace std;
 
+// add last ke LL
 void addLast(Node *headParam)
 {
     ifstream fileStream("db/items.tsv");
@@ -44,6 +45,7 @@ void addLast(Node *headParam)
     fileStream.close();
 }
 
+// display LL
 void display(Node *headParam)
 {
     addLast(headParam);
