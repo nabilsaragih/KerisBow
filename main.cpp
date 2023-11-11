@@ -13,6 +13,7 @@ int main()
 {
     Node *head = nullptr;
     NodeTransaksi *headTransaksi = nullptr;
+    NodeCheckout *headCheckout = nullptr;
     int pilihan = 0;
     unordered_map<string, string> accounts;
     unordered_map<string, string> accountRoles;
@@ -32,7 +33,7 @@ int main()
 
     while (true)
     {
-        menu(&pilihan, &accounts, &accountRoles, head, headTransaksi);
+        menu(&pilihan, &accounts, &accountRoles, head, headTransaksi, headCheckout);
     }
 
     return 0;

@@ -9,11 +9,11 @@
 #include "logIn.hpp"
 
 using namespace std;
-void menuCustomer(NodeTransaksi *headParam, Node *headx);
+void menuCustomer(NodeTransaksi *headParam, Node *headx, NodeCheckout *headCheckout);
 void saveToFile(NodeTransaksi *headParam);
 void displayData(NodeTransaksi *head, loginCustomer userData);
 
-void addFirst(NodeTransaksi *headParam, Node *itemsList, loginCustomer userData) {
+void addFirst(NodeTransaksi *headParam, Node *itemsList, loginCustomer userData, NodeCheckout *&headCheckout) {
     // Inisialisasi variabel yang dibutuhkan
     string username, input;
     int itemNumber, amount;
@@ -100,18 +100,18 @@ void addFirst(NodeTransaksi *headParam, Node *itemsList, loginCustomer userData)
     // Menyimpan perubahan ke file dan melanjutkan ke menu customer
     saveToFile(headParam);
     system("pause");
-    menuCustomer(headParam, itemsList);
+    menuCustomer(headParam, itemsList, headCheckout);
 }
 
 
 // DeleteFirst
-void deleteFirst(NodeTransaksi **headParam, Node *itemsList, int idx) {
+void deleteFirst(NodeTransaksi **headParam, Node *itemsList, int idx, NodeCheckout *&headCheckout) {
     // Menangani kasus jika tidak ada transaksi
     if (*headParam == NULL) {
         cout << "Anda belum memesan Barang" << endl;
         cout << "Barang kosong......" << endl;
         system("pause");
-        menuCustomer(*headParam, itemsList);
+        menuCustomer(*headParam, itemsList, headCheckout);
         return;
     }
 
@@ -127,7 +127,7 @@ void deleteFirst(NodeTransaksi **headParam, Node *itemsList, int idx) {
     if (idx < 1 || idx > count) {
         cout << "Input diluar rentang yang valid" << endl;
         system("pause");
-        menuCustomer(*headParam, itemsList);
+        menuCustomer(*headParam, itemsList, headCheckout);
         return;
     }
 
@@ -153,7 +153,7 @@ void deleteFirst(NodeTransaksi **headParam, Node *itemsList, int idx) {
     saveToFile(*headParam);
     cout << "\n---Barang Berhasil Dihapus---" << endl;
     system("pause");
-    menuCustomer(*headParam, itemsList);
+    menuCustomer(*headParam, itemsList, headCheckout);
 }
 
 // Simpan data transaksi ke dalam sebuah file
@@ -266,13 +266,12 @@ void importFromCheckout(NodeCheckout *&head)
             }
 
             newNodeCheckout->barang.status = status;
-
             newNodeCheckout->next = head;
             head = newNodeCheckout;
         }
         else
         {
-            cout << "Invalid line format in the file." << endl;
+            cout << "" << endl;
         }
     }
     fileStream.close();
@@ -333,13 +332,13 @@ void deleteAll(NodeTransaksi **headParam, Node *itemsList, loginCustomer userDat
 }
 
 // Checkout semua transaksi yang dimiliki oleh pengguna yang sedang login
-void checkOut(NodeTransaksi *&headParam, Node *&headx, loginCustomer userData) {
+void checkOut(NodeTransaksi *&headParam, Node *&headx, loginCustomer userData, NodeCheckout *&headCheckout) {
     // Mengecek apakah ada transaksi yang dipilih
     if (headParam == nullptr) {
         cout << "Tidak ada barang" << endl;
         cout << "Silahkan tambah barang terlebih dahulu" << endl;
         system("pause");
-        menuCustomer(headParam, headx);
+        menuCustomer(headParam, headx, headCheckout);
         return;
     }
 
@@ -366,16 +365,16 @@ void checkOut(NodeTransaksi *&headParam, Node *&headx, loginCustomer userData) {
         cout << "|           code pembayaran diatas            |" << endl;
         cout << "+---------------------------------------------+" << endl;
         system("pause");
-        menuCustomer(headParam, headx);
+        menuCustomer(headParam, headx, headCheckout);
     } else if (pilihan == "n") {
         // Batal checkout dan kembali ke menu customer  
         system("pause");
-        menuCustomer(headParam, headx);
+        menuCustomer(headParam, headx, headCheckout);
     } else {
         // Pesan untuk pilihan yang tidak valid
         cout << "Pilihan tidak tersedia" << endl;
         system("pause");
-        menuCustomer(headParam, headx);
+        menuCustomer(headParam, headx, headCheckout);
     }
 }
 // Menampilkan data transaksi yang dimiliki oleh pengguna yang sedang login
@@ -423,6 +422,7 @@ void displayData(NodeTransaksi *head, loginCustomer userData)
 
 void displayCheckout(NodeCheckout *head, loginCustomer userData)
 {
+    importFromCheckout(head);
     if (head == nullptr)
     {
         cout << "Tidak ada data checkout" << endl;
@@ -446,7 +446,6 @@ void displayCheckout(NodeCheckout *head, loginCustomer userData)
         }
         current = current->next;
     }
-    system("pause");
 
     if (counter == 1)
     {
@@ -455,13 +454,11 @@ void displayCheckout(NodeCheckout *head, loginCustomer userData)
 }
 
 // Menu customer
-void menuCustomer(NodeTransaksi *headParam, Node *headx)
+void menuCustomer(NodeTransaksi *headParam, Node *headx, NodeCheckout *headCheckout)
 {
     string pilihanTemp, temp; int pilih,idx;
     loginCustomer userData;
-    NodeCheckout *headCheckout;
     readLogin(userData);
-    importFromCheckout(headCheckout);
 
     system("cls");
     cout << "+=================================+" << endl;
@@ -487,25 +484,25 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
         case 1:
             system("cls");
             displayLinkedList(headx);
-            addFirst(headParam, headx, userData);
-            menuCustomer(headParam, headx);
+            addFirst(headParam, headx, userData, headCheckout);
+            menuCustomer(headParam, headx, headCheckout);
             break;
         case 2:
             system("cls");
             displayData(headParam, userData);
             system("pause");
-            menuCustomer(headParam, headx);
+            menuCustomer(headParam, headx, headCheckout);
             break;
         case 3:
             system("cls");
             displayCheckout(headCheckout, userData);
             system("pause");
-            menuCustomer(headParam, headx);
+            menuCustomer(headParam, headx, headCheckout);
             break;
         case 4:
             system("cls");
             displayData(headParam, userData);
-            checkOut(headParam, headx, userData);
+            checkOut(headParam, headx, userData, headCheckout);
             break;
         case 5:
             system("cls");
@@ -513,10 +510,10 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
             try{
                 cout << "\nMasukkan pilihan : "; getline(cin, temp);
                 idx = stoi(temp);
-                deleteFirst(&headParam, headx, idx);
+                deleteFirst(&headParam, headx, idx, headCheckout);
             }catch(invalid_argument &e){
                 cout<<"Inputan harus Integer";getch();cout<<endl;
-                menuCustomer(headParam, headx);
+                menuCustomer(headParam, headx, headCheckout);
             }
             break;
         case 6:
@@ -525,7 +522,7 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
             getline(cin, temp);
             searchBM(headx, temp);
             system("pause");
-            menuCustomer(headParam, headx);
+            menuCustomer(headParam, headx, headCheckout);
             break;
         case 0:
             cout << "Terima kasih telah menggunakan KerisBow" << endl;
@@ -535,7 +532,7 @@ void menuCustomer(NodeTransaksi *headParam, Node *headx)
 
         default:
             cout << "Pilihan tidak tersedia" << endl;
-            menuCustomer(headParam, headx);
+            menuCustomer(headParam, headx, headCheckout);
             break;
         }
     }
