@@ -12,8 +12,10 @@
 #include "anonymousRead.hpp"
 using namespace std;
 
+
 // Prototipe fungsi menuLoginRegister
-void menuLoginRegister(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi);
+void menuLoginRegister(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi, NodeCheckout *headCheckout);
+
 
 // enum untuk pilihan menu
 enum Pilihan {
@@ -22,8 +24,9 @@ enum Pilihan {
     KELUAR = 0
 };
 
+
 // Fungsi untuk menampilkan menu utama
-void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
+void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi, NodeCheckout *headCheckout)
 {
     string pilihanTemp;
 
@@ -31,9 +34,9 @@ void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map
 
     frameAwal();
     gotoXY(72,11);std::cout << "Selamat datang di KerisBow" << std::endl;
-	gotoXY(54,18);std::cout << "1. Login" << std::endl;
-	gotoXY(78,18);std::cout << "2. Lihat Barang" << std::endl;
-	gotoXY(108,18);std::cout << "0. Keluar" << std::endl;
+	  gotoXY(54,18);std::cout << "1. Login" << std::endl;
+	  gotoXY(78,18);std::cout << "2. Lihat Barang" << std::endl;
+	  gotoXY(108,18);std::cout << "0. Keluar" << std::endl;
     pilihanTemp = getch();
 
     try
@@ -42,7 +45,7 @@ void menu(int *pilih, unordered_map<string, string> *accountParam, unordered_map
         switch (*pilih)
         {
         case LOGIN:
-            menuLoginRegister(pilih, accountParam, accountRolesParam, headParam, headTransaksi);
+            menuLoginRegister(pilih, accountParam, accountRolesParam, headParam, headTransaksi, headCheckout);
             break;
 
         case LIHAT_BARANG:
@@ -173,8 +176,11 @@ void registerAdmin(unordered_map<string, string> *accountsParam)
     endOfFunction(1);
 }
 
+
 // Fungsi untuk menu register
-void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, unordered_map<string, string> *accountsRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
+void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, unordered_map<string, string> *accountsRolesParam, Node *headParam, NodeTransaksi *headTransaksi, NodeCheckout *headCheckout)
+
+
 {
     string username, password, pilihanTemp;
 
@@ -201,7 +207,7 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, u
         default:
             cout << "Pilihan tidak tersedia" << endl;
             endOfFunction(1);
-            menuLoginRegister(pilih, accountsParam, accountsRolesParam, headParam, headTransaksi);
+            menuLoginRegister(pilih, accountsParam, accountsRolesParam, headParam, headTransaksi, headCheckout);
             break;
         }
     }
@@ -212,8 +218,9 @@ void registerAccount(unordered_map<string, string> *accountsParam, int *pilih, u
     }
 }
 
+
 // Fungsi untuk login
-void login(unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, int *pilih, Node *headParam, NodeTransaksi *headTransaksi)
+void login(unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, int *pilih, Node *headParam, NodeTransaksi *headTransaksi, NodeCheckout *headCheckout)
 {
     string username, password;
     cout << "Username: ";
@@ -238,7 +245,7 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
             endOfFunction(1);
             if (accountRolesParam->at(username) == "customer")
             {
-                menuCustomer(headTransaksi, headParam);
+                menuCustomer(headTransaksi, headParam, headCheckout);
                 return;
             }
             else if (accountRolesParam->at(username) == "admin")
@@ -254,7 +261,8 @@ void login(unordered_map<string, string> *accountsParam, unordered_map<string, s
 }
 
 // Fungsi untuk menampilkan menu login dan register
-void menuLoginRegister(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, NodeTransaksi *headTransaksi)
+void menuLoginRegister(int *pilih, unordered_map<string, string> *accountsParam, unordered_map<string, string> *accountRolesParam, Node *headParam, 
+    NodeTransaksi *headTransaksi, NodeCheckout *headCheckout)
 {
     string pilihanTemp;
 
@@ -280,17 +288,17 @@ void menuLoginRegister(int *pilih, unordered_map<string, string> *accountsParam,
         {
         case LOGIN:
             system("cls");
-            login(accountsParam, accountRolesParam, pilih, headParam, headTransaksi);
+            login(accountsParam, accountRolesParam, pilih, headParam, headTransaksi, headCheckout);
             break;
 
         case REGISTER:
             system("cls");
-            registerAccount(accountsParam, pilih, accountRolesParam, headParam, headTransaksi);
+            registerAccount(accountsParam, pilih, accountRolesParam, headParam, headTransaksi, headCheckout);
             break;
 
         case KEMBALI:
             system("cls");
-            menu(pilih, accountsParam, accountRolesParam, headParam, headTransaksi);
+            menu(pilih, accountsParam, accountRolesParam, headParam, headTransaksi, headCheckout);
             break;
 
         default:
